@@ -163,6 +163,24 @@ if "%INSTALL_APK%"=="1" (
     echo.
 )
 
+
+:: === 自动 Git 同步 ===
+echo.
+echo [INFO] 正在同步到本地 Git 仓库...
+git add -A
+git commit -m ""Auto sync: build success"" --allow-empty
+if errorlevel 1 (
+    echo [WARN] Git commit 失败，跳过推送
+) else (
+    git push origin master >nul 2>&1
+    if errorlevel 1 (
+        echo [WARN] Git push 失败
+    ) else (
+        echo [SUCCESS] 已推送到 E:\git\slidecleaner.git
+    )
+)
+echo.
+
 echo [INFO] 构建完成！
 echo.
 pause
