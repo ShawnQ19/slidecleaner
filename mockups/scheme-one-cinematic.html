@@ -1,0 +1,1196 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>方案一 - 夜幕电影馆</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg-0: #05070c;
+      --bg-1: #090d16;
+      --bg-2: #121826;
+      --panel: rgba(16, 20, 33, 0.78);
+      --panel-strong: rgba(22, 27, 41, 0.92);
+      --panel-soft: rgba(255, 255, 255, 0.04);
+      --line: rgba(255, 255, 255, 0.10);
+      --line-strong: rgba(255, 255, 255, 0.16);
+      --text: #f5f7fb;
+      --muted: rgba(245, 247, 251, 0.74);
+      --faint: rgba(245, 247, 251, 0.46);
+      --primary: #67b7ff;
+      --primary-2: #2f8cff;
+      --cyan: #7be3ff;
+      --amber: #ffb866;
+      --rose: #ff6b7d;
+      --green: #47d99a;
+      --shadow: 0 20px 70px rgba(0, 0, 0, 0.42);
+      --shadow-soft: 0 10px 28px rgba(0, 0, 0, 0.26);
+      --radius-xl: 32px;
+      --radius-lg: 24px;
+      --radius-md: 18px;
+      --radius-sm: 14px;
+      --phone-w: 390px;
+      --phone-h: 844px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI Variable Text", "PingFang SC", "Microsoft YaHei UI", sans-serif;
+      background:
+        radial-gradient(900px 500px at 18% 10%, rgba(103, 183, 255, 0.25), transparent 55%),
+        radial-gradient(700px 420px at 88% 18%, rgba(255, 107, 125, 0.18), transparent 55%),
+        radial-gradient(860px 540px at 50% 88%, rgba(71, 217, 154, 0.10), transparent 60%),
+        linear-gradient(180deg, var(--bg-0), var(--bg-1) 36%, #080b12 100%);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    .noise {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.18;
+      background-image:
+        radial-gradient(rgba(255,255,255,0.06) 0.7px, transparent 0.8px),
+        radial-gradient(rgba(255,255,255,0.04) 0.5px, transparent 0.7px);
+      background-size: 18px 18px, 26px 26px;
+      mix-blend-mode: screen;
+    }
+
+    .orbs {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      filter: blur(12px);
+      opacity: 0.95;
+    }
+
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      transform: translate3d(0,0,0);
+      animation: float 10s ease-in-out infinite;
+    }
+
+    .orb.one {
+      width: 240px;
+      height: 240px;
+      left: -40px;
+      top: 110px;
+      background: radial-gradient(circle at 30% 30%, rgba(103,183,255,0.70), rgba(103,183,255,0.08) 62%, transparent 72%);
+    }
+
+    .orb.two {
+      width: 300px;
+      height: 300px;
+      right: -70px;
+      top: 60px;
+      background: radial-gradient(circle at 40% 35%, rgba(255,107,125,0.54), rgba(255,107,125,0.08) 60%, transparent 74%);
+      animation-delay: -3s;
+    }
+
+    .orb.three {
+      width: 380px;
+      height: 380px;
+      right: 8%;
+      bottom: -120px;
+      background: radial-gradient(circle at 35% 35%, rgba(123,227,255,0.34), rgba(71,217,154,0.06) 56%, transparent 74%);
+      animation-delay: -6s;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-22px) scale(1.02); }
+    }
+
+    .page {
+      position: relative;
+      max-width: 1720px;
+      margin: 0 auto;
+      padding: 44px 28px 64px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(420px, 0.85fr);
+      gap: 24px;
+      align-items: end;
+      margin-bottom: 28px;
+    }
+
+    .hero-copy {
+      padding: 8px 4px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 14px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255,255,255,0.04);
+      color: var(--cyan);
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .hero h1 {
+      margin: 20px 0 12px;
+      font-size: clamp(40px, 6vw, 78px);
+      line-height: 0.96;
+      letter-spacing: -0.05em;
+      font-weight: 850;
+      max-width: 9.5ch;
+      text-wrap: balance;
+      font-family: "Georgia", "Times New Roman", serif;
+    }
+
+    .hero p {
+      margin: 0;
+      max-width: 760px;
+      font-size: 17px;
+      line-height: 1.8;
+      color: var(--muted);
+    }
+
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.09);
+      color: var(--text);
+      font-size: 13px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+    }
+
+    .chip strong { font-weight: 700; }
+
+    .palette {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    .tone {
+      min-height: 124px;
+      padding: 16px;
+      border-radius: var(--radius-lg);
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+      border: 1px solid rgba(255,255,255,0.09);
+      box-shadow: var(--shadow-soft);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .tone::after {
+      content: "";
+      position: absolute;
+      inset: auto -20% -40% auto;
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      filter: blur(4px);
+      opacity: 0.72;
+    }
+
+    .tone:nth-child(1)::after { background: radial-gradient(circle, rgba(103,183,255,0.9), transparent 68%); }
+    .tone:nth-child(2)::after { background: radial-gradient(circle, rgba(255,107,125,0.82), transparent 68%); }
+    .tone:nth-child(3)::after { background: radial-gradient(circle, rgba(255,184,102,0.85), transparent 68%); }
+    .tone:nth-child(4)::after { background: radial-gradient(circle, rgba(71,217,154,0.84), transparent 68%); }
+
+    .tone small {
+      display: block;
+      color: var(--faint);
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .tone strong {
+      display: block;
+      font-size: 17px;
+      font-weight: 780;
+      margin-bottom: 6px;
+    }
+
+    .tone span {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+      display: block;
+      max-width: 14ch;
+    }
+
+    .showcase {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 24px;
+      margin-top: 26px;
+    }
+
+    .phone {
+      position: relative;
+      width: 100%;
+      max-width: var(--phone-w);
+      aspect-ratio: 390 / 844;
+      margin: 0 auto;
+      border-radius: 42px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+      border: 1px solid rgba(255,255,255,0.13);
+      box-shadow: 0 24px 90px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.05);
+      overflow: hidden;
+    }
+
+    .phone::before {
+      content: "";
+      position: absolute;
+      inset: 8px;
+      border-radius: 34px;
+      border: 1px solid rgba(255,255,255,0.05);
+      pointer-events: none;
+    }
+
+    .screen {
+      position: absolute;
+      inset: 0;
+      padding: 18px 16px 16px;
+      background:
+        radial-gradient(220px 180px at 20% 6%, rgba(103,183,255,0.17), transparent 60%),
+        radial-gradient(240px 160px at 84% 8%, rgba(255,107,125,0.12), transparent 60%),
+        linear-gradient(180deg, rgba(11,14,22,0.98), rgba(8,10,16,0.97));
+    }
+
+    .screen.preview-layout {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .screen.preview-layout .preview-stage {
+      flex: 1;
+      min-height: 360px;
+    }
+
+    .status {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: rgba(245,247,251,0.92);
+      font-size: 12px;
+      margin-bottom: 10px;
+      letter-spacing: 0.02em;
+    }
+
+    .bar {
+      width: 118px;
+      height: 4px;
+      border-radius: 999px;
+      margin: 4px auto 14px;
+      background: rgba(255,255,255,0.17);
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 6px 0 14px;
+    }
+
+    .title-group h2 {
+      margin: 0;
+      font-size: 22px;
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+      font-family: "Georgia", "Times New Roman", serif;
+    }
+
+    .title-group p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .icon-btn {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.10);
+      color: var(--text);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+    }
+
+    .panel {
+      border-radius: 26px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03));
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.04), var(--shadow-soft);
+      overflow: hidden;
+    }
+
+    .gallery-hero {
+      padding: 14px;
+      margin-bottom: 14px;
+    }
+
+    .gallery-hero .cover {
+      position: relative;
+      height: 176px;
+      border-radius: 22px;
+      overflow: hidden;
+      background:
+        linear-gradient(135deg, rgba(103,183,255,0.28), rgba(255,107,125,0.12)),
+        linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+    }
+
+    .cover-grid {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 10px;
+      padding: 10px;
+    }
+
+    .mosaic {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .thumb {
+      position: relative;
+      border-radius: 14px;
+      overflow: hidden;
+      background: linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.03));
+      border: 1px solid rgba(255,255,255,0.08);
+      min-height: 46px;
+    }
+
+    .thumb::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(255,255,255,0.14), transparent 45%), var(--thumb-bg);
+    }
+
+    .thumb.badge::after {
+      content: attr(data-badge);
+      position: absolute;
+      inset: auto 6px 6px auto;
+      padding: 4px 6px;
+      font-size: 10px;
+      font-weight: 700;
+      border-radius: 999px;
+      background: rgba(8,10,16,0.62);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .hero-copy-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 4px 2px 6px 0;
+      color: var(--text);
+    }
+
+    .hero-copy-card .month {
+      font-size: 14px;
+      color: var(--muted);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .hero-copy-card .count {
+      font-size: 44px;
+      line-height: 0.95;
+      letter-spacing: -0.05em;
+      font-weight: 860;
+      font-family: "Georgia", "Times New Roman", serif;
+    }
+
+    .hero-copy-card .desc {
+      font-size: 12px;
+      line-height: 1.6;
+      color: var(--muted);
+    }
+
+    .gallery-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .month-card {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 12px;
+      padding: 14px;
+    }
+
+    .month-meta h3, .section-title h3 {
+      margin: 0;
+      font-size: 18px;
+      font-family: "Georgia", "Times New Roman", serif;
+      letter-spacing: -0.02em;
+    }
+
+    .month-meta p, .section-title p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .stack-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      align-self: center;
+    }
+
+    .stack-grid .thumb {
+      aspect-ratio: 1/1.3;
+      min-height: 60px;
+    }
+
+    .footer-summary {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      padding: 14px;
+      margin-top: 12px;
+    }
+
+    .summary-card {
+      min-height: 88px;
+      border-radius: 20px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03));
+      border: 1px solid rgba(255,255,255,0.07);
+      padding: 14px;
+    }
+
+    .summary-card .label { color: var(--faint); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; }
+    .summary-card .value { margin-top: 10px; font-size: 22px; font-weight: 820; line-height: 1; }
+    .summary-card .sub { margin-top: 8px; color: var(--muted); font-size: 12px; }
+
+    .pager-screen {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      gap: 14px;
+    }
+
+    .progress-shell {
+      height: 7px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.09);
+      overflow: hidden;
+      margin-bottom: 14px;
+    }
+
+    .progress-shell .progress {
+      width: 62%;
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), var(--rose));
+      border-radius: inherit;
+      box-shadow: 0 0 24px rgba(103,183,255,0.35);
+    }
+
+    .pager-stage {
+      position: relative;
+      flex: 1;
+      border-radius: 28px;
+      padding: 14px;
+      background:
+        radial-gradient(400px 280px at 50% 20%, rgba(103,183,255,0.14), transparent 64%),
+        linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.03));
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+      overflow: hidden;
+    }
+
+    .pager-stage::before {
+      content: "";
+      position: absolute;
+      inset: 14px 14px auto auto;
+      width: 86px;
+      height: 86px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,107,125,0.45), transparent 68%);
+      filter: blur(2px);
+    }
+
+    .media-card {
+      position: absolute;
+      inset: 22px;
+      border-radius: 28px;
+      overflow: hidden;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.02)),
+        linear-gradient(140deg, rgba(16,24,40,0.84), rgba(9,12,20,0.92));
+      border: 1px solid rgba(255,255,255,0.10);
+      box-shadow: 0 24px 60px rgba(0,0,0,0.45);
+    }
+
+    .media-visual {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(420px 240px at 25% 22%, rgba(123,227,255,0.28), transparent 58%),
+        radial-gradient(320px 220px at 78% 36%, rgba(255,107,125,0.20), transparent 58%),
+        linear-gradient(135deg, rgba(255,255,255,0.10), rgba(255,255,255,0.02));
+    }
+
+    .media-visual::before {
+      content: "";
+      position: absolute;
+      inset: 14% 10% 14% 10%;
+      border-radius: 24px;
+      background:
+        linear-gradient(145deg, rgba(0,0,0,0.05), rgba(0,0,0,0.35)),
+        linear-gradient(135deg, rgba(103,183,255,0.55), rgba(255,184,102,0.18) 45%, rgba(255,107,125,0.42));
+      filter: saturate(1.05);
+      transform: skewY(-2deg);
+    }
+
+    .media-visual::after {
+      content: "";
+      position: absolute;
+      left: 10%;
+      right: 10%;
+      top: 18%;
+      bottom: 18%;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.13);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04);
+    }
+
+    .delete-overlay {
+      position: absolute;
+      inset: auto 0 0;
+      padding: 20px 18px 18px;
+      background: linear-gradient(180deg, transparent, rgba(255, 74, 90, 0.22) 34%, rgba(255,74,90,0.58));
+      border-top: 1px solid rgba(255,255,255,0.08);
+      text-align: center;
+    }
+
+    .delete-overlay .label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(7, 10, 15, 0.36);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
+      font-weight: 700;
+      font-size: 13px;
+    }
+
+    .swipe-stats {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 0 4px;
+    }
+
+    .swipe-stats .stat {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .swipe-stats .stat span {
+      color: var(--faint);
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .swipe-stats .stat strong {
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .queue-bar {
+      padding: 14px 16px;
+      display: grid;
+      gap: 12px;
+      border-radius: 24px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.09), rgba(255,255,255,0.04));
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .queue-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .queue-row .count {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .queue-row .count strong {
+      font-size: 18px;
+    }
+
+    .queue-row .count span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .pill-btn {
+      padding: 13px 16px;
+      border: 0;
+      border-radius: 18px;
+      color: white;
+      font-size: 14px;
+      font-weight: 820;
+      letter-spacing: 0.02em;
+      background: linear-gradient(135deg, #ff4a5a, #ff8b5c);
+      box-shadow: 0 16px 30px rgba(255, 74, 90, 0.3);
+    }
+
+    .pill-btn.secondary {
+      background: rgba(255,255,255,0.07);
+      box-shadow: none;
+      border: 1px solid rgba(255,255,255,0.09);
+      color: var(--text);
+    }
+
+    .preview-stage {
+      position: relative;
+      flex: 1;
+      border-radius: 30px;
+      overflow: hidden;
+      background:
+        radial-gradient(420px 300px at 50% 50%, rgba(103,183,255,0.18), transparent 60%),
+        linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.03));
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .preview-photo {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(180deg, rgba(6,8,13,0.06), rgba(6,8,13,0.26)),
+        radial-gradient(360px 220px at 30% 30%, rgba(123,227,255,0.30), transparent 60%),
+        radial-gradient(280px 200px at 78% 34%, rgba(255,184,102,0.24), transparent 58%),
+        linear-gradient(135deg, rgba(103,183,255,0.68), rgba(255,107,125,0.26));
+    }
+
+    .preview-photo::before {
+      content: "";
+      position: absolute;
+      inset: 22% 18% 22% 18%;
+      border-radius: 28px;
+      border: 1px solid rgba(255,255,255,0.16);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06);
+    }
+
+    .preview-photo::after {
+      content: "4K";
+      position: absolute;
+      right: 20px;
+      top: 20px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.13);
+      background: rgba(8,10,16,0.42);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+    }
+
+    .live-badge {
+      position: absolute;
+      left: 18px;
+      bottom: 18px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(8,10,16,0.56);
+      border: 1px solid rgba(255,255,255,0.12);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
+      font-size: 12px;
+      font-weight: 760;
+    }
+
+    .info-sheet {
+      padding: 14px 16px 16px;
+      margin-top: 0;
+    }
+
+    .info-sheet .file {
+      font-size: 16px;
+      font-weight: 760;
+      margin: 0 0 10px;
+    }
+
+    .info-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .meta-chip {
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.08);
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .trash-stage {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      height: 100%;
+    }
+
+    .trash-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      flex: 1;
+    }
+
+    .trash-item {
+      position: relative;
+      aspect-ratio: 0.72 / 1;
+      border-radius: 18px;
+      overflow: hidden;
+      background: linear-gradient(135deg, rgba(255,255,255,0.14), rgba(255,255,255,0.03));
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .trash-item::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: var(--trash-bg);
+      filter: saturate(1.02);
+    }
+
+    .trash-item.selected {
+      outline: 2px solid rgba(103,183,255,0.85);
+      box-shadow: 0 0 0 4px rgba(103,183,255,0.15), 0 16px 30px rgba(0,0,0,0.32);
+    }
+
+    .trash-item.selected::after {
+      content: "✓";
+      position: absolute;
+      right: 8px;
+      top: 8px;
+      width: 24px;
+      height: 24px;
+      display: grid;
+      place-items: center;
+      border-radius: 999px;
+      background: rgba(103,183,255,0.92);
+      color: #00111f;
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .trash-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 14px;
+      border-radius: 22px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .trash-toolbar .title {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .trash-toolbar strong { font-size: 18px; }
+    .trash-toolbar span { color: var(--muted); font-size: 12px; }
+
+    .action-row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .footer-note {
+      margin-top: 22px;
+      color: var(--faint);
+      font-size: 12px;
+      line-height: 1.8;
+    }
+
+    .screen-label {
+      position: absolute;
+      top: 18px;
+      left: 18px;
+      padding: 7px 11px;
+      border-radius: 999px;
+      background: rgba(8,10,16,0.52);
+      border: 1px solid rgba(255,255,255,0.10);
+      color: rgba(245,247,251,0.82);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      z-index: 4;
+      backdrop-filter: blur(10px);
+    }
+
+    .section-wrap {
+      background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 34px;
+      padding: 22px;
+      box-shadow: var(--shadow);
+    }
+
+    .section-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    .section-head .section-title p {
+      max-width: 56ch;
+    }
+
+    .section-tag {
+      color: var(--primary);
+      font-weight: 800;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-size: 11px;
+    }
+
+    .brand-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .brand-badge {
+      padding: 9px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.05);
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    @media (max-width: 1200px) {
+      .hero { grid-template-columns: 1fr; }
+      .palette { grid-template-columns: repeat(2, 1fr); }
+      .showcase { grid-template-columns: 1fr; }
+      .page { padding: 28px 18px 50px; }
+    }
+
+    @media (max-width: 720px) {
+      .palette { grid-template-columns: 1fr; }
+      .month-card { grid-template-columns: 1fr; }
+      .footer-summary { grid-template-columns: 1fr; }
+      .action-row { grid-template-columns: 1fr; }
+      .section-wrap { padding: 16px; border-radius: 24px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="noise"></div>
+  <div class="orbs" aria-hidden="true">
+    <div class="orb one"></div>
+    <div class="orb two"></div>
+    <div class="orb three"></div>
+  </div>
+
+  <main class="page">
+    <section class="hero">
+      <div class="hero-copy">
+        <div class="eyebrow">Scheme 01 · Night Cinema</div>
+        <h1>夜幕电影馆</h1>
+        <p>
+          以“沉浸式媒体浏览”为核心的深色视觉方案。重点是把照片和视频当成主角，
+          通过克制的玻璃层、强对比排版和电影感渐变，给清理流程做出专业、耐看、干净的观感。
+        </p>
+        <div class="hero-meta">
+          <div class="chip"><strong>调性</strong> 高级 / 沉浸 / 工具感</div>
+          <div class="chip"><strong>关键词</strong> 玻璃层、海报感、发光边界</div>
+          <div class="chip"><strong>适配</strong> 主页、滑动清理、预览、回收站</div>
+        </div>
+      </div>
+
+      <div class="palette section-wrap">
+        <div class="section-head">
+          <div class="section-title">
+            <div class="section-tag">Palette</div>
+            <h3>视觉基调</h3>
+            <p>深夜背景、冷蓝主色、危险红色与暖金提示色构成完整操作语义。</p>
+          </div>
+        </div>
+        <div class="brand-row">
+          <div class="brand-badge">Background #05070C</div>
+          <div class="brand-badge">Primary #67B7FF</div>
+          <div class="brand-badge">Danger #FF4A5A</div>
+          <div class="brand-badge">Accent #FFB866</div>
+        </div>
+        <div class="palette" style="margin-top: 14px;">
+          <div class="tone"><small>Panels</small><strong>半透明玻璃卡</strong><span>用于列表、底部操作条和信息面板</span></div>
+          <div class="tone"><small>Danger</small><strong>删除与回收站</strong><span>红色渐变强调不可逆操作</span></div>
+          <div class="tone"><small>Focus</small><strong>浏览与预览</strong><span>冷蓝渐变建立内容聚焦感</span></div>
+          <div class="tone"><small>Success</small><strong>确认与完成</strong><span>绿色仅在完成态出现，避免过度刺激</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-wrap">
+      <div class="section-head">
+        <div class="section-title">
+          <div class="section-tag">Overview</div>
+          <h3>四个关键界面效果图</h3>
+          <p>把应用的主流程拆成四个手机稿，方便快速比较整体风格是否统一。</p>
+        </div>
+      </div>
+
+      <div class="showcase">
+        <article class="phone">
+          <div class="screen-label">Gallery Home</div>
+          <div class="screen">
+            <div class="status"><span>9:41</span><span>5G</span><span>100%</span></div>
+            <div class="bar"></div>
+            <div class="topbar">
+              <div class="title-group">
+                <h2>相册清理</h2>
+                <p>按月份浏览 · 快速筛选不需要的媒体</p>
+              </div>
+              <div class="icon-btn">⌘</div>
+            </div>
+
+            <div class="panel gallery-hero">
+              <div class="cover">
+                <div class="cover-grid">
+                  <div class="mosaic">
+                    <div class="thumb" style="--thumb-bg: linear-gradient(135deg, #1b3c78, #3c96ff);"></div>
+                    <div class="thumb" style="--thumb-bg: linear-gradient(135deg, #49347e, #d95bff);"></div>
+                    <div class="thumb badge" data-badge="+12" style="--thumb-bg: linear-gradient(135deg, #8e2f4f, #ff7a95);"></div>
+                    <div class="thumb" style="--thumb-bg: linear-gradient(135deg, #184f5f, #3dd1ff);"></div>
+                    <div class="thumb" style="--thumb-bg: linear-gradient(135deg, #573816, #ffb866);"></div>
+                    <div class="thumb" style="--thumb-bg: linear-gradient(135deg, #173b29, #48d99a);"></div>
+                  </div>
+                  <div class="hero-copy-card">
+                    <div>
+                      <div class="month">2026 年 5 月</div>
+                      <div class="count">128</div>
+                    </div>
+                    <div class="desc">这一月里有 128 个项目，建议优先清理视频与重复截图。</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="gallery-list">
+              <div class="panel month-card">
+                <div class="month-meta">
+                  <h3>2026 年 4 月</h3>
+                  <p>86 个项目 · 其中 11 个视频 · 6 个 Live Photo</p>
+                </div>
+                <div class="stack-grid">
+                  <div class="thumb" style="--thumb-bg: linear-gradient(135deg, #10294f, #4ca3ff);"></div>
+                  <div class="thumb" style="--thumb-bg: linear-gradient(135deg, #452745, #ff6589);"></div>
+                  <div class="thumb badge" data-badge="+7" style="--thumb-bg: linear-gradient(135deg, #2d3a1a, #a2f57a);"></div>
+                </div>
+              </div>
+              <div class="panel month-card">
+                <div class="month-meta">
+                  <h3>2026 年 3 月</h3>
+                  <p>54 个项目 · 适合一轮快速筛选</p>
+                </div>
+                <div class="stack-grid">
+                  <div class="thumb" style="--thumb-bg: linear-gradient(135deg, #17324f, #6dd0ff);"></div>
+                  <div class="thumb" style="--thumb-bg: linear-gradient(135deg, #482b18, #ffb264);"></div>
+                  <div class="thumb badge" data-badge="+4" style="--thumb-bg: linear-gradient(135deg, #301d56, #b98dff);"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="footer-summary panel">
+              <div class="summary-card">
+                <div class="label">Total</div>
+                <div class="value">268</div>
+                <div class="sub">本机媒体总量</div>
+              </div>
+              <div class="summary-card">
+                <div class="label">Video</div>
+                <div class="value">37</div>
+                <div class="sub">长按可快速预览</div>
+              </div>
+              <div class="summary-card">
+                <div class="label">Live</div>
+                <div class="value">14</div>
+                <div class="sub">支持动图识别</div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="phone">
+          <div class="screen-label">Swipe Cleanup</div>
+          <div class="screen pager-screen">
+            <div class="status"><span>9:41</span><span>5G</span><span>100%</span></div>
+            <div class="bar"></div>
+            <div class="topbar">
+              <div class="title-group">
+                <h2>2026 年 5 月</h2>
+                <p>已选 23 / 50 · 上滑加入删除队列</p>
+              </div>
+              <div class="icon-btn">↩</div>
+            </div>
+
+            <div class="progress-shell"><div class="progress"></div></div>
+
+            <div class="pager-stage">
+              <div class="media-card">
+                <div class="media-visual"></div>
+                <div class="delete-overlay">
+                  <div class="label">↑ 上滑删除 · 松开加入队列</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="swipe-stats">
+              <div class="stat">
+                <span>Queue</span>
+                <strong>23 项</strong>
+              </div>
+              <div class="stat" style="text-align:right;">
+                <span>State</span>
+                <strong style="color: var(--rose);">危险删除</strong>
+              </div>
+            </div>
+
+            <div class="queue-bar">
+              <div class="queue-row">
+                <div class="count">
+                  <strong>已选 23 项</strong>
+                  <span>达到 50 项后自动触发确认</span>
+                </div>
+                <button class="pill-btn">确认删除</button>
+              </div>
+              <div class="queue-row">
+                <button class="pill-btn secondary">撤销</button>
+                <button class="pill-btn secondary">重做</button>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="phone">
+          <div class="screen-label">Preview</div>
+          <div class="screen preview-layout">
+            <div class="status"><span>9:41</span><span>5G</span><span>100%</span></div>
+            <div class="bar"></div>
+            <div class="topbar">
+              <div class="title-group">
+                <h2>预览</h2>
+                <p>图片 / 视频 / Live Photo · 全屏沉浸查看</p>
+              </div>
+              <div class="icon-btn">i</div>
+            </div>
+
+            <div class="preview-stage">
+              <div class="preview-photo"></div>
+              <div class="live-badge">▶ Live Photo · 长按播放</div>
+            </div>
+
+            <div class="panel info-sheet">
+              <p class="file">DSC_2384.MOV</p>
+              <div class="info-grid">
+                <div class="meta-chip">2.5 MB</div>
+                <div class="meta-chip">2026.05.18 14:30</div>
+                <div class="meta-chip">视频</div>
+                <div class="meta-chip">2x 长按加速</div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="phone">
+          <div class="screen-label">Trash Bin</div>
+          <div class="screen trash-stage">
+            <div class="status"><span>9:41</span><span>5G</span><span>100%</span></div>
+            <div class="bar"></div>
+            <div class="topbar">
+              <div class="title-group">
+                <h2>回收站</h2>
+                <p>已保存 48 项 · 可恢复或永久删除</p>
+              </div>
+              <div class="icon-btn">☰</div>
+            </div>
+
+            <div class="trash-toolbar">
+              <div class="title">
+                <strong>选择 3 项</strong>
+                <span>批量恢复 / 批量删除</span>
+              </div>
+              <div class="chip" style="padding: 8px 10px;">最近删除</div>
+            </div>
+
+            <div class="trash-grid">
+              <div class="trash-item" style="--trash-bg: linear-gradient(135deg, #10324f, #4ca3ff);"></div>
+              <div class="trash-item selected" style="--trash-bg: linear-gradient(135deg, #4f1f33, #ff6b7d);"></div>
+              <div class="trash-item" style="--trash-bg: linear-gradient(135deg, #553d16, #ffb866);"></div>
+              <div class="trash-item" style="--trash-bg: linear-gradient(135deg, #173a2a, #47d99a);"></div>
+              <div class="trash-item selected" style="--trash-bg: linear-gradient(135deg, #2f224f, #ab8cff);"></div>
+              <div class="trash-item" style="--trash-bg: linear-gradient(135deg, #1f2648, #7be3ff);"></div>
+            </div>
+
+            <div class="action-row">
+              <button class="pill-btn secondary">恢复</button>
+              <button class="pill-btn">永久删除</button>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <p class="footer-note">
+      这是一份静态高保真效果图原型，用来确认方案一的视觉方向。下一步可以直接把这套语言迁移到 Android Compose 里，
+      我也可以继续为你拆成“主页版、滑动页版、预览页版、回收站版”四张独立图。
+    </p>
+  </main>
+</body>
+</html>

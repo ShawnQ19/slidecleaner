@@ -1,0 +1,28 @@
+# Build
+/build/
+/app/build/
+*.apk
+*.aab
+
+# Gradle
+.gradle/
+gradlew.bat
+gradlew
+gradle/wrapper/gradle-wrapper.properties
+
+# IDE
+.idea/
+*.iml
+*.iws
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Local config
+local.properties
+*.log
+log_export/

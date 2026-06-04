@@ -1,0 +1,1212 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>方案三 - 未来实验室</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg-0: #02040a;
+      --bg-1: #050812;
+      --bg-2: #091122;
+      --panel: rgba(10, 14, 24, 0.82);
+      --panel-strong: rgba(12, 18, 32, 0.92);
+      --panel-soft: rgba(255, 255, 255, 0.04);
+      --line: rgba(116, 247, 255, 0.13);
+      --line-strong: rgba(116, 247, 255, 0.20);
+      --text: #f2fbff;
+      --muted: rgba(242, 251, 255, 0.72);
+      --faint: rgba(242, 251, 255, 0.42);
+      --primary: #74f7ff;
+      --secondary: #b7ff4a;
+      --danger: #ff5d7a;
+      --amber: #ffc94a;
+      --violet: #9d8cff;
+      --shadow: 0 24px 76px rgba(0, 0, 0, 0.44);
+      --shadow-soft: 0 14px 28px rgba(0, 0, 0, 0.28);
+      --radius-xl: 30px;
+      --radius-lg: 22px;
+      --radius-md: 16px;
+      --radius-sm: 12px;
+      --phone-w: 390px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: "Bahnschrift", "Segoe UI Variable Text", "PingFang SC", "Microsoft YaHei UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(900px 520px at 18% 10%, rgba(116, 247, 255, 0.18), transparent 48%),
+        radial-gradient(760px 480px at 82% 14%, rgba(183, 255, 74, 0.12), transparent 50%),
+        radial-gradient(760px 520px at 60% 88%, rgba(255, 93, 122, 0.12), transparent 52%),
+        linear-gradient(180deg, var(--bg-0) 0%, var(--bg-1) 44%, #03050b 100%);
+      overflow-x: hidden;
+    }
+
+    .grid,
+    .scan {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .grid {
+      background-image:
+        linear-gradient(rgba(116, 247, 255, 0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(116, 247, 255, 0.08) 1px, transparent 1px);
+      background-size: 100% 46px, 46px 100%;
+      opacity: 0.10;
+      mask-image: linear-gradient(180deg, rgba(0,0,0,0.28), rgba(0,0,0,0.06));
+    }
+
+    .scan {
+      background:
+        linear-gradient(180deg, transparent 0%, rgba(255,255,255,0.03) 50%, transparent 100%);
+      background-size: 100% 260px;
+      animation: scanMove 10s linear infinite;
+      opacity: 0.5;
+      mix-blend-mode: screen;
+    }
+
+    @keyframes scanMove {
+      from { transform: translateY(-12%); }
+      to { transform: translateY(12%); }
+    }
+
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(4px);
+      pointer-events: none;
+    }
+
+    .orb.one {
+      width: 260px;
+      height: 260px;
+      left: -48px;
+      top: 92px;
+      background: radial-gradient(circle at 35% 35%, rgba(116,247,255,0.64), rgba(116,247,255,0.10) 58%, transparent 72%);
+    }
+
+    .orb.two {
+      width: 340px;
+      height: 340px;
+      right: -80px;
+      top: 80px;
+      background: radial-gradient(circle at 35% 35%, rgba(183,255,74,0.38), rgba(183,255,74,0.08) 58%, transparent 74%);
+    }
+
+    .orb.three {
+      width: 420px;
+      height: 420px;
+      right: 10%;
+      bottom: -140px;
+      background: radial-gradient(circle at 35% 35%, rgba(255,93,122,0.22), rgba(255,93,122,0.05) 58%, transparent 74%);
+    }
+
+    .page {
+      position: relative;
+      max-width: 1760px;
+      margin: 0 auto;
+      padding: 42px 28px 62px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.14fr) minmax(420px, 0.86fr);
+      gap: 24px;
+      align-items: end;
+      margin-bottom: 28px;
+    }
+
+    .hero-copy {
+      padding: 8px 4px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 14px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(10, 14, 24, 0.58);
+      color: var(--primary);
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      font-size: 11px;
+      font-weight: 800;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+    }
+
+    .hero h1 {
+      margin: 20px 0 12px;
+      font-size: clamp(44px, 6vw, 86px);
+      line-height: 0.92;
+      letter-spacing: -0.07em;
+      text-transform: uppercase;
+      font-weight: 900;
+      max-width: 7ch;
+    }
+
+    .hero p {
+      margin: 0;
+      max-width: 790px;
+      font-size: 17px;
+      line-height: 1.86;
+      color: var(--muted);
+    }
+
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(10, 14, 24, 0.72);
+      border: 1px solid rgba(116, 247, 255, 0.13);
+      color: var(--text);
+      font-size: 13px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.04), 0 14px 24px rgba(0,0,0,0.18);
+    }
+
+    .chip strong { font-weight: 800; color: var(--primary); }
+
+    .hud-board {
+      padding: 18px;
+      border-radius: 28px;
+      background: linear-gradient(180deg, rgba(12,18,32,0.86), rgba(10,14,24,0.72));
+      border: 1px solid rgba(116, 247, 255, 0.13);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+    }
+
+    .section-tag {
+      color: var(--secondary);
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      font-weight: 800;
+      font-size: 11px;
+    }
+
+    .hud-title {
+      margin-top: 8px;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: end;
+    }
+
+    .hud-title h3, .section-head h3 {
+      margin: 0;
+      font-size: 18px;
+      letter-spacing: -0.02em;
+      font-weight: 850;
+    }
+
+    .hud-title p, .section-head p {
+      margin: 7px 0 0;
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 12px;
+    }
+
+    .signals {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .signal {
+      min-height: 118px;
+      padding: 14px;
+      border-radius: 18px;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(116, 247, 255, 0.12);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02)),
+        linear-gradient(135deg, rgba(12,18,32,0.96), rgba(7,10,18,0.92));
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.04), 0 12px 24px rgba(0,0,0,0.16);
+    }
+
+    .signal::after {
+      content: "";
+      position: absolute;
+      inset: auto -16% -34% auto;
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: var(--signal-glow);
+      filter: blur(4px);
+      opacity: 0.95;
+    }
+
+    .signal small {
+      display: block;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--faint);
+      margin-bottom: 12px;
+    }
+
+    .signal strong {
+      display: block;
+      font-size: 17px;
+      font-weight: 900;
+      margin-bottom: 6px;
+    }
+
+    .signal span {
+      display: block;
+      font-size: 13px;
+      line-height: 1.4;
+      color: var(--muted);
+      max-width: 13ch;
+    }
+
+    .section-wrap {
+      padding: 22px;
+      border-radius: 34px;
+      background: linear-gradient(180deg, rgba(10, 14, 24, 0.80), rgba(8, 10, 18, 0.68));
+      border: 1px solid rgba(116, 247, 255, 0.12);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    .section-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    .showcase {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 24px;
+      margin-top: 26px;
+    }
+
+    .phone {
+      position: relative;
+      width: 100%;
+      max-width: var(--phone-w);
+      aspect-ratio: 390 / 844;
+      margin: 0 auto;
+      border-radius: 38px;
+      background: linear-gradient(180deg, #0d1220, #070a11);
+      border: 1px solid rgba(116, 247, 255, 0.14);
+      box-shadow:
+        0 24px 72px rgba(0,0,0,0.50),
+        0 0 0 1px rgba(116,247,255,0.06),
+        inset 0 1px 0 rgba(255,255,255,0.04);
+      overflow: hidden;
+    }
+
+    .phone::before {
+      content: "";
+      position: absolute;
+      inset: 8px;
+      border-radius: 30px;
+      border: 1px solid rgba(116, 247, 255, 0.05);
+      pointer-events: none;
+    }
+
+    .screen {
+      position: absolute;
+      inset: 0;
+      padding: 18px 16px 16px;
+      background:
+        radial-gradient(240px 180px at 18% 6%, rgba(116, 247, 255, 0.12), transparent 60%),
+        radial-gradient(220px 160px at 86% 10%, rgba(183, 255, 74, 0.08), transparent 58%),
+        linear-gradient(180deg, rgba(10,14,24,0.94), rgba(6,9,16,0.98));
+    }
+
+    .screen.hud-layout {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .status {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: rgba(242, 251, 255, 0.76);
+      font-size: 12px;
+      margin-bottom: 8px;
+    }
+
+    .bar {
+      width: 118px;
+      height: 4px;
+      margin: 0 auto 14px;
+      border-radius: 999px;
+      background: rgba(242, 251, 255, 0.16);
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 6px 0 10px;
+    }
+
+    .title-group h2 {
+      margin: 0;
+      font-size: 22px;
+      line-height: 1.04;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+    }
+
+    .title-group p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .icon-btn {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(116, 247, 255, 0.12);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+      color: var(--text);
+      font-weight: 900;
+    }
+
+    .panel {
+      border-radius: 24px;
+      background: linear-gradient(180deg, rgba(12,18,32,0.92), rgba(7,10,18,0.86));
+      border: 1px solid rgba(116, 247, 255, 0.10);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.03), 0 16px 28px rgba(0,0,0,0.20);
+      overflow: hidden;
+    }
+
+    .gallery-hero {
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+
+    .cover {
+      display: grid;
+      grid-template-columns: 1.08fr 0.92fr;
+      gap: 10px;
+      min-height: 178px;
+      padding: 12px;
+      border-radius: 18px;
+      background:
+        radial-gradient(180px 120px at 24% 18%, rgba(116,247,255,0.18), transparent 60%),
+        radial-gradient(180px 120px at 76% 26%, rgba(183,255,74,0.14), transparent 60%),
+        linear-gradient(135deg, rgba(12,18,32,0.96), rgba(6,9,16,0.94));
+    }
+
+    .mosaic {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .thumb {
+      min-height: 48px;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid rgba(116, 247, 255, 0.10);
+      background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+      position: relative;
+    }
+
+    .thumb::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: var(--thumb-bg);
+      opacity: 0.96;
+    }
+
+    .thumb.badge::after {
+      content: attr(data-badge);
+      position: absolute;
+      right: 6px;
+      bottom: 6px;
+      padding: 4px 6px;
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 900;
+      color: #041018;
+      background: rgba(116,247,255,0.96);
+      box-shadow: 0 0 20px rgba(116,247,255,0.26);
+    }
+
+    .hero-copy-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 2px 0 4px;
+    }
+
+    .hero-copy-card .month {
+      font-size: 13px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--faint);
+    }
+
+    .hero-copy-card .count {
+      font-size: 44px;
+      line-height: 0.92;
+      letter-spacing: -0.07em;
+      font-weight: 900;
+      color: var(--primary);
+    }
+
+    .hero-copy-card .desc {
+      font-size: 12px;
+      line-height: 1.6;
+      color: var(--muted);
+    }
+
+    .gallery-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .month-card {
+      display: grid;
+      grid-template-columns: 1.08fr 0.92fr;
+      gap: 12px;
+      padding: 14px;
+    }
+
+    .month-meta h3, .chip-title h3 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+    }
+
+    .month-meta p, .chip-title p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .stack-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      align-self: center;
+    }
+
+    .stack-grid .thumb {
+      aspect-ratio: 1 / 1.22;
+      min-height: 58px;
+    }
+
+    .footer-summary {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 10px;
+      padding: 14px;
+    }
+
+    .summary-card {
+      min-height: 88px;
+      border-radius: 18px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+      border: 1px solid rgba(116, 247, 255, 0.08);
+      padding: 14px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+    }
+
+    .summary-card .label {
+      color: var(--faint);
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .summary-card .value {
+      margin-top: 10px;
+      font-size: 22px;
+      font-weight: 900;
+      line-height: 1;
+      color: var(--text);
+    }
+
+    .summary-card .sub {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .progress-shell {
+      height: 7px;
+      border-radius: 999px;
+      background: rgba(242, 251, 255, 0.09);
+      overflow: hidden;
+      margin-bottom: 14px;
+    }
+
+    .progress-shell .progress {
+      width: 66%;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      box-shadow: 0 0 20px rgba(116,247,255,0.26);
+    }
+
+    .pager-stage {
+      position: relative;
+      flex: 1;
+      border-radius: 28px;
+      padding: 14px;
+      border: 1px solid rgba(116, 247, 255, 0.10);
+      background:
+        radial-gradient(320px 240px at 50% 18%, rgba(116,247,255,0.12), transparent 60%),
+        radial-gradient(220px 220px at 72% 42%, rgba(255,93,122,0.12), transparent 56%),
+        linear-gradient(180deg, rgba(12,18,32,0.94), rgba(6,9,16,0.90));
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+      overflow: hidden;
+    }
+
+    .pager-stage::before {
+      content: "";
+      position: absolute;
+      inset: 16px 16px auto auto;
+      width: 96px;
+      height: 96px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,93,122,0.44), transparent 68%);
+      filter: blur(2px);
+    }
+
+    .media-card {
+      position: absolute;
+      inset: 22px;
+      border-radius: 24px;
+      overflow: hidden;
+      border: 1px solid rgba(116, 247, 255, 0.12);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02)),
+        linear-gradient(135deg, rgba(6, 10, 18, 0.98), rgba(12, 18, 32, 0.96));
+      box-shadow: 0 24px 46px rgba(0,0,0,0.28);
+    }
+
+    .media-visual {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(400px 220px at 25% 22%, rgba(116,247,255,0.30), transparent 58%),
+        radial-gradient(320px 220px at 78% 36%, rgba(183,255,74,0.16), transparent 58%),
+        linear-gradient(135deg, rgba(116,247,255,0.26), rgba(255,93,122,0.18) 45%, rgba(183,255,74,0.18));
+    }
+
+    .media-visual::before {
+      content: "";
+      position: absolute;
+      inset: 14% 10% 14% 10%;
+      border-radius: 18px;
+      border: 1px solid rgba(116,247,255,0.22);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04), 0 0 34px rgba(116,247,255,0.10);
+      transform: skewY(-2deg);
+    }
+
+    .media-visual::after {
+      content: "SCAN";
+      position: absolute;
+      right: 18px;
+      top: 18px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: rgba(12,18,32,0.72);
+      border: 1px solid rgba(116,247,255,0.18);
+      color: var(--primary);
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+    }
+
+    .delete-overlay {
+      position: absolute;
+      inset: auto 0 0;
+      padding: 18px;
+      text-align: center;
+      background: linear-gradient(180deg, transparent, rgba(255,93,122,0.18) 40%, rgba(255,93,122,0.40));
+      border-top: 1px solid rgba(116,247,255,0.08);
+    }
+
+    .delete-overlay .label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(10,14,24,0.64);
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 800;
+      box-shadow: 0 0 28px rgba(255,93,122,0.12);
+    }
+
+    .swipe-stats {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 0 4px;
+    }
+
+    .swipe-stats .stat {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .swipe-stats .stat span {
+      color: var(--faint);
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .swipe-stats .stat strong {
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    .queue-bar {
+      margin-top: 8px;
+      padding: 14px 16px;
+      display: grid;
+      gap: 12px;
+      border-radius: 22px;
+      background: rgba(10,14,24,0.72);
+      border: 1px solid rgba(116,247,255,0.12);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+    }
+
+    .queue-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .queue-row .count {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .queue-row .count strong {
+      font-size: 18px;
+      color: var(--text);
+    }
+
+    .queue-row .count span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .pill-btn {
+      padding: 13px 16px;
+      border: 0;
+      border-radius: 16px;
+      color: #041018;
+      font-size: 14px;
+      font-weight: 900;
+      letter-spacing: 0.02em;
+      background: linear-gradient(135deg, var(--primary), #99fdff);
+      box-shadow: 0 14px 28px rgba(116,247,255,0.22);
+    }
+
+    .pill-btn.secondary {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(116,247,255,0.12);
+      color: var(--text);
+      box-shadow: none;
+    }
+
+    .preview-stage {
+      position: relative;
+      flex: 1;
+      border-radius: 28px;
+      overflow: hidden;
+      border: 1px solid rgba(116,247,255,0.12);
+      background:
+        radial-gradient(360px 240px at 32% 24%, rgba(116,247,255,0.18), transparent 60%),
+        radial-gradient(280px 180px at 76% 30%, rgba(183,255,74,0.12), transparent 58%),
+        linear-gradient(180deg, rgba(10,14,24,0.94), rgba(6,9,16,0.94));
+      box-shadow: 0 20px 42px rgba(0,0,0,0.22);
+    }
+
+    .preview-photo {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02)),
+        radial-gradient(340px 220px at 22% 20%, rgba(116,247,255,0.30), transparent 60%),
+        radial-gradient(280px 180px at 78% 30%, rgba(255,93,122,0.22), transparent 58%),
+        linear-gradient(135deg, rgba(116,247,255,0.46), rgba(255,93,122,0.20), rgba(183,255,74,0.24));
+    }
+
+    .preview-photo::before {
+      content: "";
+      position: absolute;
+      inset: 18% 16% 18% 16%;
+      border-radius: 20px;
+      border: 1px solid rgba(116,247,255,0.22);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04), 0 0 32px rgba(116,247,255,0.12);
+    }
+
+    .preview-photo::after {
+      content: "4K";
+      position: absolute;
+      right: 18px;
+      top: 18px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(116,247,255,0.16);
+      background: rgba(10,14,24,0.74);
+      color: var(--primary);
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+    }
+
+    .live-badge {
+      position: absolute;
+      left: 18px;
+      bottom: 18px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(10,14,24,0.68);
+      border: 1px solid rgba(116,247,255,0.14);
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 900;
+      box-shadow: 0 0 30px rgba(116,247,255,0.10);
+    }
+
+    .info-sheet {
+      padding: 14px 16px 16px;
+      margin-top: 0;
+    }
+
+    .info-sheet .file {
+      font-size: 16px;
+      font-weight: 900;
+      margin: 0 0 10px;
+      color: var(--text);
+    }
+
+    .info-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .meta-chip {
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: rgba(10,14,24,0.72);
+      border: 1px solid rgba(116,247,255,0.12);
+      color: var(--muted);
+      font-size: 12px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+    }
+
+    .trash-stage {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      height: 100%;
+    }
+
+    .trash-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 14px;
+      border-radius: 20px;
+      background: rgba(10,14,24,0.72);
+      border: 1px solid rgba(116,247,255,0.12);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+    }
+
+    .trash-toolbar .title {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .trash-toolbar strong { font-size: 18px; }
+    .trash-toolbar span { color: var(--muted); font-size: 12px; }
+
+    .trash-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      flex: 1;
+    }
+
+    .trash-item {
+      position: relative;
+      aspect-ratio: 0.72 / 1;
+      border-radius: 16px;
+      overflow: hidden;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(116,247,255,0.10);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.03), 0 10px 18px rgba(0,0,0,0.16);
+    }
+
+    .trash-item::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: var(--trash-bg);
+      opacity: 0.98;
+    }
+
+    .trash-item.selected {
+      outline: 2px solid rgba(116,247,255,0.82);
+      box-shadow: 0 0 0 4px rgba(116,247,255,0.12), 0 14px 26px rgba(0,0,0,0.22);
+    }
+
+    .trash-item.selected::after {
+      content: "✓";
+      position: absolute;
+      right: 8px;
+      top: 8px;
+      width: 24px;
+      height: 24px;
+      display: grid;
+      place-items: center;
+      border-radius: 999px;
+      background: rgba(116,247,255,0.94);
+      color: #041018;
+      font-size: 14px;
+      font-weight: 900;
+      box-shadow: 0 0 18px rgba(116,247,255,0.16);
+    }
+
+    .action-row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .footer-note {
+      margin-top: 22px;
+      color: var(--faint);
+      font-size: 12px;
+      line-height: 1.8;
+    }
+
+    .screen-label {
+      position: absolute;
+      top: 18px;
+      left: 18px;
+      padding: 7px 11px;
+      border-radius: 999px;
+      background: rgba(10,14,24,0.72);
+      border: 1px solid rgba(116,247,255,0.12);
+      color: var(--primary);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      z-index: 4;
+      backdrop-filter: blur(10px);
+    }
+
+    @media (max-width: 1200px) {
+      .hero { grid-template-columns: 1fr; }
+      .showcase { grid-template-columns: 1fr; }
+      .signals { grid-template-columns: repeat(2, 1fr); }
+      .page { padding: 28px 18px 50px; }
+    }
+
+    @media (max-width: 720px) {
+      .signals { grid-template-columns: 1fr; }
+      .month-card { grid-template-columns: 1fr; }
+      .footer-summary { grid-template-columns: 1fr; }
+      .action-row { grid-template-columns: 1fr; }
+      .section-wrap { padding: 16px; border-radius: 24px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="grid"></div>
+  <div class="scan"></div>
+  <div class="orb one" aria-hidden="true"></div>
+  <div class="orb two" aria-hidden="true"></div>
+  <div class="orb three" aria-hidden="true"></div>
+
+  <main class="page">
+    <section class="hero">
+      <div class="hero-copy">
+        <div class="eyebrow">Scheme 03 · Neon Lab</div>
+        <h1>未来实验室</h1>
+        <p>
+          这套方案更像一个高性能控制台：数据、扫描、队列、确认都被做成了更硬朗的 HUD。
+          视觉重心从“舒适”转向“高辨识度”和“技术感”。
+        </p>
+        <div class="hero-meta">
+          <div class="chip"><strong>调性</strong> 赛博 / 精确 / 控制台</div>
+          <div class="chip"><strong>关键词</strong> 网格、霓虹、HUD、扫描线</div>
+          <div class="chip"><strong>适配</strong> 效率型工具、沉浸浏览、强操作感</div>
+        </div>
+      </div>
+
+      <div class="hud-board">
+        <div class="section-tag">Palette</div>
+        <div class="hud-title">
+          <div>
+            <h3>视觉基调</h3>
+            <p>深空底色加霓虹高亮，强调扫描、对比和状态反馈。</p>
+          </div>
+          <div class="chip">HUD Mode</div>
+        </div>
+        <div class="signals">
+          <div class="signal" style="--signal-glow: radial-gradient(circle, rgba(116,247,255,0.94), transparent 68%);"><small>Primary</small><strong>电光青</strong><span>主行动与聚焦</span></div>
+          <div class="signal" style="--signal-glow: radial-gradient(circle, rgba(183,255,74,0.90), transparent 68%);"><small>Support</small><strong>荧光绿</strong><span>状态与完成</span></div>
+          <div class="signal" style="--signal-glow: radial-gradient(circle, rgba(255,93,122,0.92), transparent 68%);"><small>Danger</small><strong>警报红</strong><span>删除与不可逆</span></div>
+          <div class="signal" style="--signal-glow: radial-gradient(circle, rgba(255,201,74,0.92), transparent 68%);"><small>Accent</small><strong>能量金</strong><span>信息与提示</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-wrap">
+      <div class="section-head">
+        <div>
+          <div class="section-tag">Overview</div>
+          <h3>四个关键界面效果图</h3>
+          <p>更有机械感、更偏控制台，适合强调效率与技术气质。</p>
+        </div>
+      </div>
+
+      <div class="showcase">
+        <article class="phone">
+          <div class="screen-label">Gallery Home</div>
+          <div class="screen hud-layout">
+            <div class="status"><span>9:41</span><span>5G</span><span>100%</span></div>
+            <div class="bar"></div>
+            <div class="topbar">
+              <div class="title-group">
+                <h2>相册清理</h2>
+                <p>数据仓库模式 · 月份网格</p>
+              </div>
+              <div class="icon-btn">▣</div>
+            </div>
+
+            <div class="panel gallery-hero">
+              <div class="cover">
+                <div class="mosaic">
+                  <div class="thumb" style="--thumb-bg: linear-gradient(135deg, #74f7ff, #9beeff);"></div>
+                  <div class="thumb" style="--thumb-bg: linear-gradient(135deg, #b7ff4a, #e8ffb0);"></div>
+                  <div class="thumb badge" data-badge="+10" style="--thumb-bg: linear-gradient(135deg, #ff5d7a, #ff9cb0);"></div>
+                  <div class="thumb" style="--thumb-bg: linear-gradient(135deg, #ffc94a, #ffe2a5);"></div>
+                  <div class="thumb" style="--thumb-bg: linear-gradient(135deg, #9d8cff, #d0c8ff);"></div>
+                  <div class="thumb" style="--thumb-bg: linear-gradient(135deg, #74f7ff, #c4fbff);"></div>
+                </div>
+                <div class="hero-copy-card">
+                  <div>
+                    <div class="month">2026 / 05</div>
+                    <div class="count">128</div>
+                  </div>
+                  <div class="desc">当前月份已被扫描并分组，建议从高容量项目开始处理。</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="gallery-list">
+              <div class="panel month-card">
+                <div class="month-meta">
+                  <h3>2026 / 04</h3>
+                  <p>86 项 · 11 视频 · 6 Live</p>
+                </div>
+                <div class="stack-grid">
+                  <div class="thumb" style="--thumb-bg: linear-gradient(135deg, #74f7ff, #93f1ff);"></div>
+                  <div class="thumb" style="--thumb-bg: linear-gradient(135deg, #ff5d7a, #ff8ba1);"></div>
+                  <div class="thumb badge" data-badge="+7" style="--thumb-bg: linear-gradient(135deg, #b7ff4a, #e2ff89);"></div>
+                </div>
+              </div>
+              <div class="panel month-card">
+                <div class="month-meta">
+                  <h3>2026 / 03</h3>
+                  <p>54 项 · 更适合快速扫尾</p>
+                </div>
+                <div class="stack-grid">
+                  <div class="thumb" style="--thumb-bg: linear-gradient(135deg, #ffc94a, #ffe5a0);"></div>
+                  <div class="thumb" style="--thumb-bg: linear-gradient(135deg, #9d8cff, #d0c8ff);"></div>
+                  <div class="thumb badge" data-badge="+4" style="--thumb-bg: linear-gradient(135deg, #74f7ff, #c4fbff);"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="footer-summary panel">
+              <div class="summary-card">
+                <div class="label">Total</div>
+                <div class="value">268</div>
+                <div class="sub">整机媒体资产</div>
+              </div>
+              <div class="summary-card">
+                <div class="label">Video</div>
+                <div class="value">37</div>
+                <div class="sub">高亮为可播放资源</div>
+              </div>
+              <div class="summary-card">
+                <div class="label">Live</div>
+                <div class="value">14</div>
+                <div class="sub">动态照片独立识别</div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="phone">
+          <div class="screen-label">Swipe Cleanup</div>
+          <div class="screen hud-layout">
+            <div class="status"><span>9:41</span><span>5G</span><span>100%</span></div>
+            <div class="bar"></div>
+            <div class="topbar">
+              <div class="title-group">
+                <h2>2026 / 05</h2>
+                <p>扫描式上滑 · 队列确认</p>
+              </div>
+              <div class="icon-btn">⤴</div>
+            </div>
+
+            <div class="progress-shell"><div class="progress"></div></div>
+
+            <div class="pager-stage">
+              <div class="media-card">
+                <div class="media-visual"></div>
+                <div class="delete-overlay"><div class="label">DELETION QUEUED · 松手确认</div></div>
+              </div>
+            </div>
+
+            <div class="swipe-stats">
+              <div class="stat"><span>Queue</span><strong>23 / 50</strong></div>
+              <div class="stat" style="text-align:right;"><span>State</span><strong style="color: var(--danger);">Alert</strong></div>
+            </div>
+
+            <div class="queue-bar">
+              <div class="queue-row">
+                <div class="count">
+                  <strong>23 items armed</strong>
+                  <span>达到阈值后弹出系统确认</span>
+                </div>
+                <button class="pill-btn">Confirm</button>
+              </div>
+              <div class="queue-row">
+                <button class="pill-btn secondary">Undo</button>
+                <button class="pill-btn secondary">Redo</button>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="phone">
+          <div class="screen-label">Preview</div>
+          <div class="screen hud-layout">
+            <div class="status"><span>9:41</span><span>5G</span><span>100%</span></div>
+            <div class="bar"></div>
+            <div class="topbar">
+              <div class="title-group">
+                <h2>预览</h2>
+                <p>全屏显示 · 2X 播放 · Live Link</p>
+              </div>
+              <div class="icon-btn">◎</div>
+            </div>
+
+            <div class="preview-stage">
+              <div class="preview-photo"></div>
+              <div class="live-badge">▶ LIVE LINK · 长按播放</div>
+            </div>
+
+            <div class="panel info-sheet">
+              <p class="file">DSC_2384.MOV</p>
+              <div class="info-grid">
+                <div class="meta-chip">2.5 MB</div>
+                <div class="meta-chip">2026.05.18 14:30</div>
+                <div class="meta-chip">VIDEO</div>
+                <div class="meta-chip">2X SPEED</div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="phone">
+          <div class="screen-label">Trash Bin</div>
+          <div class="screen hud-layout">
+            <div class="status"><span>9:41</span><span>5G</span><span>100%</span></div>
+            <div class="bar"></div>
+            <div class="topbar">
+              <div class="title-group">
+                <h2>回收站</h2>
+                <p>批量恢复 / 永久删除 · 操作日志可追踪</p>
+              </div>
+              <div class="icon-btn">☰</div>
+            </div>
+
+            <div class="trash-toolbar">
+              <div class="title">
+                <strong>3 selected</strong>
+                <span>Batch operations</span>
+              </div>
+              <div class="chip" style="padding: 8px 10px; border-color: rgba(116,247,255,0.16);">RECENT</div>
+            </div>
+
+            <div class="trash-grid">
+              <div class="trash-item" style="--trash-bg: linear-gradient(135deg, rgba(116,247,255,0.18), rgba(116,247,255,0.48));"></div>
+              <div class="trash-item selected" style="--trash-bg: linear-gradient(135deg, rgba(255,93,122,0.30), rgba(255,93,122,0.60));"></div>
+              <div class="trash-item" style="--trash-bg: linear-gradient(135deg, rgba(183,255,74,0.14), rgba(183,255,74,0.42));"></div>
+              <div class="trash-item" style="--trash-bg: linear-gradient(135deg, rgba(255,201,74,0.18), rgba(255,201,74,0.44));"></div>
+              <div class="trash-item selected" style="--trash-bg: linear-gradient(135deg, rgba(157,140,255,0.24), rgba(157,140,255,0.58));"></div>
+              <div class="trash-item" style="--trash-bg: linear-gradient(135deg, rgba(116,247,255,0.14), rgba(255,255,255,0.06));"></div>
+            </div>
+
+            <div class="action-row">
+              <button class="pill-btn secondary">恢复</button>
+              <button class="pill-btn">永久删除</button>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <p class="footer-note">
+      未来实验室更偏“效率工具”和“技术控制台”气质。如果你想要更极端一点，我也可以继续往更硬核的赛博界面推进。
+    </p>
+  </main>
+</body>
+</html>
