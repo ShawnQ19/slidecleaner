@@ -47,16 +47,6 @@ object LivePhotoDetector {
             return pairedResult
         }
 
-        // 4. 视频签名回退检测
-        if (filePath != null && containsVideoSignature(filePath)) {
-            val info = LivePhotoInfo(
-                type = LivePhotoType.GOOGLE_PIXEL,
-                videoOffset = estimateVideoOffset(filePath)
-            )
-            AppLogger.i(TAG, "detect: 视频签名回退命中, offset=${info.videoOffset}")
-            return info
-        }
-
         AppLogger.d(TAG, "detect: 非 Live Photo, uri=$uri")
         return LivePhotoInfo()
     }
@@ -270,36 +260,6 @@ object LivePhotoDetector {
     }
 
     // ==================== 工具方法 ====================
-
-    private fun containsVideoSignature(filePath: String): Boolean {
-        return try {
-            RandomAccessFile(filePath, "r").use { raf ->
-                val buffer = ByteArray(4096)
-                val read = raf.read(buffer)
-                if (read > 0) {
-                    val header = String(buffer, 0, read, Charsets.ISO_8859_1)
-                    header.contains("ftyp") || header.contains("moov")
-                } else false
-            }
-        } catch (e: Exception) {
-            false
-        }
-    }
-
-    private fun estimateVideoOffset(filePath: String): Long {
-        return try {
-            RandomAccessFile(filePath, "r").use { raf ->
-                val fileLength = raf.length()
-                val buffer = ByteArray(minOf(65536, fileLength.toInt()))
-                raf.read(buffer)
-                val header = String(buffer, Charsets.ISO_8859_1)
-                val ftypIndex = header.indexOf("ftyp")
-                if (ftypIndex >= 0) ftypIndex.toLong() else 0L
-            }
-        } catch (e: Exception) {
-            0L
-        }
-    }
 
     private fun extractXmpValue(xmp: String, key: String): Long {
         val regex = "$key=\"(\\d+)\"".toRegex()
