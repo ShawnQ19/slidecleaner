@@ -64,6 +64,7 @@ fun MediaSwipeScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
+    val canUndo by viewModel.undoManager.canUndo.collectAsState()
     val density = LocalDensity.current
     var topBarHeight by remember { mutableStateOf(0) }
     val topBarHeightDp = with(density) { topBarHeight.toDp() }
@@ -222,7 +223,9 @@ fun MediaSwipeScreen(
 
                     DeleteQueueBar(
                         deleteQueue = uiState.deleteQueue,
-                        onConfirmDelete = { viewModel.showDeleteConfirmDialog() }
+                        onConfirmDelete = { viewModel.showDeleteConfirmDialog() },
+                        onUndo = { viewModel.undo() },
+                        canUndo = canUndo
                     )
                 }
             }
