@@ -76,14 +76,14 @@ fun MediaSwipeScreen(
 
     val pagerState = rememberPagerState(
         initialPage = uiState.currentIndex,
-        pageCount = { uiState.mediaItems.size }
+        pageCount = { uiState.items.size }
     )
     var lastPage by remember { mutableStateOf<Int?>(null) }
     var isSwipingKeptPhoto = false
 
-    LaunchedEffect(uiState.currentIndex, uiState.mediaItems.size) {
-        if (uiState.mediaItems.isNotEmpty()) {
-            val safeIndex = uiState.currentIndex.coerceIn(0, uiState.mediaItems.size - 1)
+    LaunchedEffect(uiState.currentIndex, uiState.items.size) {
+        if (uiState.items.isNotEmpty()) {
+            val safeIndex = uiState.currentIndex.coerceIn(0, uiState.items.size - 1)
             if (pagerState.currentPage != safeIndex) {
                 pagerState.scrollToPage(safeIndex)
             }
@@ -101,7 +101,7 @@ fun MediaSwipeScreen(
         val currentPage = pagerState.currentPage
         val previousPage = lastPage
         if (previousPage != null && currentPage > previousPage) {
-            val previousItem = uiState.mediaItems.getOrNull(previousPage)
+            val previousItem = uiState.items.getOrNull(previousPage)
             if (previousItem != null && !isSwipingKeptPhoto) {
                 viewModel.keepCurrent()
             }
@@ -136,7 +136,7 @@ fun MediaSwipeScreen(
                     Text(uiState.error ?: "", style = MaterialTheme.typography.bodyMedium, color = AppColors.TextSecondary)
                 }
             }
-            uiState.mediaItems.isEmpty() -> {
+            uiState.items.isEmpty() -> {
                 GlassCard(
                     modifier = Modifier.fillMaxSize().padding(32.dp),
                     shape = AppShape.XLarge,
@@ -178,8 +178,8 @@ fun MediaSwipeScreen(
                 }
             }
             else -> {
-                val browseProgress = if (uiState.mediaItems.isNotEmpty()) {
-                    (uiState.currentIndex + 1).toFloat() / uiState.mediaItems.size.toFloat()
+                val browseProgress = if (uiState.items.isNotEmpty()) {
+                    (uiState.currentIndex + 1).toFloat() / uiState.items.size.toFloat()
                 } else {
                     0f
                 }
@@ -189,7 +189,7 @@ fun MediaSwipeScreen(
 
                     SwipeStatusStrip(
                         currentIndex = uiState.currentIndex + 1,
-                        totalCount = uiState.mediaItems.size,
+                        totalCount = uiState.items.size,
                         queuedCount = uiState.deleteQueue.items.size,
                         canUndo = canUndo,
                         canRedo = canRedo
@@ -208,7 +208,7 @@ fun MediaSwipeScreen(
                         contentPadding = PaddingValues(0.dp),
                         beyondBoundsPageCount = 1
                     ) { page ->
-                        val item = uiState.mediaItems.getOrNull(page)
+                        val item = uiState.items.getOrNull(page)
                         if (item != null) {
                             SwipeableMediaCard(
                                 mediaItem = item,

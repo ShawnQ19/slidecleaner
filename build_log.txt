@@ -36,19 +36,29 @@ Warning: SDK processing. This version only understands SDK XML versions up to 3 
 > Task :app:writeDebugAppMetadata UP-TO-DATE
 > Task :app:writeDebugSigningConfigVersions UP-TO-DATE
 > Task :app:kaptGenerateStubsDebugKotlin
-> Task :app:kaptDebugKotlin UP-TO-DATE
+> Task :app:kaptDebugKotlin
+
 > Task :app:compileDebugKotlin
-> Task :app:compileDebugJavaWithJavac UP-TO-DATE
-> Task :app:hiltAggregateDepsDebug UP-TO-DATE
-> Task :app:hiltJavaCompileDebug UP-TO-DATE
-> Task :app:processDebugJavaRes UP-TO-DATE
-> Task :app:mergeDebugJavaResource UP-TO-DATE
+w: file:///D:/Users/Downloads/develop/slidecleaner/app/src/main/java/com/gallery/cleaner/MainActivity.kt:57:15 'onActivityResult(Int, Int, Intent?): Unit' is deprecated. Deprecated in Java
+w: file:///D:/Users/Downloads/develop/slidecleaner/app/src/main/java/com/gallery/cleaner/ui/component/Animations.kt:57:13 Parameter 'duration' is never used
+w: file:///D:/Users/Downloads/develop/slidecleaner/app/src/main/java/com/gallery/cleaner/ui/screen/gallery/MonthCard.kt:42:5 Parameter 'index' is never used
+w: file:///D:/Users/Downloads/develop/slidecleaner/app/src/main/java/com/gallery/cleaner/ui/screen/gallery/MonthCard.kt:46:9 Variable 'rows' is never used
+w: file:///D:/Users/Downloads/develop/slidecleaner/app/src/main/java/com/gallery/cleaner/ui/screen/media/CleanupViewModel.kt:110:21 Parameter 'silent' is never used
+w: file:///D:/Users/Downloads/develop/slidecleaner/app/src/main/java/com/gallery/cleaner/ui/screen/preview/PreviewScreen.kt:75:5 Parameter 'mediaId' is never used
+w: file:///D:/Users/Downloads/develop/slidecleaner/app/src/main/java/com/gallery/cleaner/ui/screen/settings/ThemeSettingsScreen.kt:79:9 Variable 'context' is never used
+w: file:///D:/Users/Downloads/develop/slidecleaner/app/src/main/java/com/gallery/cleaner/util/log/FileLogger.kt:236:13 Expected performance impact from inlining is insignificant. Inlining works best for functions with parameters of functional types
+
+> Task :app:compileDebugJavaWithJavac
+> Task :app:hiltAggregateDepsDebug
+> Task :app:hiltJavaCompileDebug
+> Task :app:processDebugJavaRes
+> Task :app:mergeDebugJavaResource
 > Task :app:transformDebugClassesWithAsm
 > Task :app:dexBuilderDebug
-> Task :app:mergeDebugGlobalSynthetics UP-TO-DATE
+> Task :app:mergeDebugGlobalSynthetics
 > Task :app:mergeProjectDexDebug
 > Task :app:packageDebug
-> Task :app:createDebugApkListingFileRedirect UP-TO-DATE
+> Task :app:createDebugApkListingFileRedirect
 > Task :app:assembleDebug
 
 Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
@@ -57,5 +67,5 @@ You can use '--warning-mode all' to show the individual deprecation warnings and
 
 For more on this, please refer to https://docs.gradle.org/8.9/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
 
-BUILD SUCCESSFUL in 36s
-41 actionable tasks: 7 executed, 34 up-to-date
+BUILD SUCCESSFUL in 1m 6s
+41 actionable tasks: 15 executed, 26 up-to-date

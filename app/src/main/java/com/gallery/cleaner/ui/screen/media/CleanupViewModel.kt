@@ -1,7 +1,4 @@
-const fs = require('fs');
-
-// 1. Write CleanupViewModel base class
-const baseContent = \package com.gallery.cleaner.ui.screen.media
+package com.gallery.cleaner.ui.screen.media
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -16,12 +13,11 @@ import com.gallery.cleaner.domain.usecase.DeleteMediaUseCase
 import com.gallery.cleaner.util.log.AppLogger
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-abstract class CleanupViewModel @Inject constructor(
+abstract class CleanupViewModel(
     protected val mediaRepository: MediaRepository,
     protected val deleteMediaUseCase: DeleteMediaUseCase,
     protected val processedMediaStore: ProcessedMediaStore
@@ -53,9 +49,9 @@ abstract class CleanupViewModel @Inject constructor(
     }
 
     fun queueForDelete(item: MediaItem) {
-        AppLogger.userAction(TAG, "queueForDelete", "item.id=\, queueSize=\")
+        AppLogger.userAction(TAG, "queueForDelete", "item.id=${item.id}, queueSize=${_deleteQueueItems.size}")
         if (_deleteQueueItems.contains(item)) {
-            AppLogger.w(TAG, "item.id=\ 已在删除队列中，跳过")
+            AppLogger.w(TAG, "item.id=${item.id} 已在删除队列中，跳过")
             return
         }
         val removedIndex = currentItems.indexOfFirst { it.id == item.id }
@@ -74,7 +70,6 @@ abstract class CleanupViewModel @Inject constructor(
 
     protected open fun executeQueueForDelete(item: MediaItem, removedIndex: Int, oldIndex: Int) {
         _deleteQueueItems.add(item)
-        updateDeleteQueue()
         val items = currentItems.toMutableList()
         items.removeAll { it.id == item.id }
         val newIndex = computeNewIndex(items, removedIndex, oldIndex)
@@ -117,13 +112,13 @@ abstract class CleanupViewModel @Inject constructor(
         if (_uiState.value.showDeleteDialog) return
         viewModelScope.launch {
             keptItems.add(item)
-            AppLogger.userAction(TAG, "keepCurrent", "item.id=\, keptCount=\")
+            AppLogger.userAction(TAG, "keepCurrent", "item.id=${item.id}, keptCount=${keptItems.size}")
         }
     }
 
     fun unkeepCurrent(item: MediaItem) {
         keptItems.remove(item)
-        AppLogger.userAction(TAG, "unkeepCurrent", "item.id=\, keptCount=\")
+        AppLogger.userAction(TAG, "unkeepCurrent", "item.id=${item.id}, keptCount=${keptItems.size}")
     }
 
     fun isItemKept(item: MediaItem): Boolean = keptItems.contains(item)
@@ -138,7 +133,7 @@ abstract class CleanupViewModel @Inject constructor(
         viewModelScope.launch { undoManager.redo() }
     }
 
-    fun showDeleteConfirmDialog() {
+    open fun showDeleteConfirmDialog() {
         AppLogger.d(TAG, "显示删除确认对话框")
         _uiState.update { it.copy(showDeleteDialog = true) }
     }
@@ -163,21 +158,21 @@ abstract class CleanupViewModel @Inject constructor(
     }
 
     protected open fun handleDeleteSuccess(result: TrashResult.Success) {
-        AppLogger.i(TAG, "删除成功: \ 项")
+        AppLogger.i(TAG, "删除成功: ${result.deletedCount} 项")
         finalizeKeptItems()
         finalizeDeleteQueue(
             message = if (deleteMediaUseCase.repository.isTrashSupported()) {
-                "已移入系统回收站 \ 项"
+                "已移入系统回收站 ${result.deletedCount} 项"
             } else {
-                "已永久删除 \ 项"
+                "已永久删除 ${result.deletedCount} 项"
             }
         )
     }
 
     protected open fun handleDeleteError(result: TrashResult.Error) {
-        AppLogger.e(TAG, "删除失败: \")
+        AppLogger.e(TAG, "删除失败: ${result.message}")
         _uiState.update {
-            it.copy(showDeleteDialog = false, deleteSuccess = false, deleteMessage = "删除失败: \")
+            it.copy(showDeleteDialog = false, deleteSuccess = false, deleteMessage = "删除失败: ${result.message}")
         }
     }
 
@@ -199,10 +194,10 @@ abstract class CleanupViewModel @Inject constructor(
         AppLogger.exit(TAG, "onBackPressed")
     }
 
-    private fun finalizeKeptItems() {
+    protected fun finalizeKeptItems() {
         if (keptItems.isEmpty()) return
         val uris = keptItems.map { it.uri }
-        AppLogger.i(TAG, "finalizeKeptItems: 持久化 \ 个保留项")
+        AppLogger.i(TAG, "finalizeKeptItems: 持久化 ${uris.size} 个保留项")
         viewModelScope.launch { processedMediaStore.markProcessed(uris) }
         keptItems.clear()
     }
@@ -211,7 +206,7 @@ abstract class CleanupViewModel @Inject constructor(
         AppLogger.enter(TAG, "onTrashIntentResult", "success" to success, "count" to count)
         if (success) {
             finalizeKeptItems()
-            finalizeDeleteQueue("已移入系统回收站 \ 项")
+            finalizeDeleteQueue("已移入系统回收站 $count 项")
         } else {
             _uiState.update { it.copy(showDeleteDialog = false, deleteSuccess = false, deleteMessage = "用户取消了删除操作") }
         }
@@ -237,7 +232,3 @@ abstract class CleanupViewModel @Inject constructor(
         }
     }
 }
-\;
-
-fs.writeFileSync('D:\\Users\\Downloads\\develop\\slidecleaner\\app\\src\\main\\java\\com\\gallery\\cleaner\\ui\\screen\\media\\CleanupViewModel.kt', baseContent, 'utf-8');
-console.log('CleanupViewModel written');

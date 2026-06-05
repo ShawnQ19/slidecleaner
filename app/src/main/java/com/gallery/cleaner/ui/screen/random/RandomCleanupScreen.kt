@@ -174,16 +174,16 @@ fun RandomCleanupScreen(
 
         initialPage = uiState.currentIndex,
 
-        pageCount = { uiState.batchItems.size }
+        pageCount = { uiState.items.size }
 
     )
 
     var lastPage by remember { mutableStateOf<Int?>(null) }
     var isSwipingKeptPhoto = false
 
-    LaunchedEffect(uiState.currentIndex, uiState.batchItems.size) {
+    LaunchedEffect(uiState.currentIndex, uiState.items.size) {
 
-        if (uiState.batchItems.isNotEmpty() && pagerState.currentPage != uiState.currentIndex) {
+        if (uiState.items.isNotEmpty() && pagerState.currentPage != uiState.currentIndex) {
 
             pagerState.scrollToPage(uiState.currentIndex)
 
@@ -197,7 +197,7 @@ fun RandomCleanupScreen(
         val currentPage = pagerState.currentPage
         val previousPage = lastPage
         if (previousPage != null && currentPage > previousPage) {
-            val previousItem = uiState.batchItems.getOrNull(previousPage)
+            val previousItem = uiState.items.getOrNull(previousPage)
             if (previousItem != null && !isSwipingKeptPhoto) {
                 viewModel.keepCurrent()
             }
@@ -283,9 +283,9 @@ fun RandomCleanupScreen(
 
             else -> {
 
-                val browseProgress = if (uiState.batchItems.isNotEmpty()) {
+                val browseProgress = if (uiState.items.isNotEmpty()) {
 
-                    (uiState.currentIndex + 1).toFloat() / uiState.batchItems.size.toFloat()
+                    (uiState.currentIndex + 1).toFloat() / uiState.items.size.toFloat()
 
                 } else {
 
@@ -305,7 +305,7 @@ fun RandomCleanupScreen(
 
                         currentIndex = uiState.currentIndex + 1,
 
-                        totalCount = uiState.batchItems.size,
+                        totalCount = uiState.items.size,
 
                         queuedCount = uiState.deleteQueue.items.size,
 
@@ -341,7 +341,7 @@ fun RandomCleanupScreen(
 
                     ) { page ->
 
-                        val item = uiState.batchItems.getOrNull(page)
+                        val item = uiState.items.getOrNull(page)
 
                         if (item != null) {
 
@@ -514,7 +514,7 @@ fun RandomCleanupScreen(
 
                 title = "确认删除",
 
-                text = if (uiState.batchItems.isEmpty()) {
+                text = if (uiState.items.isEmpty()) {
                     "已清理完本组照片，确认删除已加入删除队列的 ${uiState.deleteQueue.items.size} 个项目吗？"
                 } else if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
 
