@@ -5,6 +5,30 @@
 
 ---
 
+## [1.4.10] - 2026-06-05
+
+### 改进 (Changed)
+
+- **Snackbar 结果回调优化**
+  - 之前：showSnackbar 后立即 dismissResultMessage，如果用户快速导航离开可能导致消息状态未清理。
+  - 现在：根据 showSnackbar 返回的 SnackbarResult 决定何时 dismiss，确保消息被用户看到后才清理状态。
+  - 相关文件：[MediaSwipeScreen.kt](app/src/main/java/com/gallery/cleaner/ui/screen/media/MediaSwipeScreen.kt)、[RandomCleanupScreen.kt](app/src/main/java/com/gallery/cleaner/ui/screen/random/RandomCleanupScreen.kt)
+  - 负责人：开发团队
+
+- **页面转场动画改为水平滑动**
+  - 之前：所有页面转场使用 scaleIn/scaleOut + fadeIn/fadeOut 组合。
+  - 现在：统一使用 slideInHorizontally/slideOutHorizontally 水平滑动效果，与用户左右滑动手势一致，体验更自然。
+  - 相关文件：[NavGraph.kt](app/src/main/java/com/gallery/cleaner/ui/navigation/NavGraph.kt)
+  - 负责人：开发团队
+
+- **移除 MediaSwipeScreen 顶部栏 UNDO/REDO 按钮**
+  - 移除 TopAppBar 中的 AnimatedVisibility 撤销/重做按钮，保持界面简洁。
+  - 移除底部 SwipeStatusStrip 中的 UNDO/REDO 状态芯片。
+  - 相关文件：[MediaSwipeScreen.kt](app/src/main/java/com/gallery/cleaner/ui/screen/media/MediaSwipeScreen.kt)
+  - 负责人：开发团队
+
+---
+
 ## [1.3.0] - 2026-06-04
 
 ### 修复 (Fixed)

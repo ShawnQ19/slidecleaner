@@ -1,13 +1,8 @@
 package com.gallery.cleaner.ui.navigation
 
-import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -35,39 +30,41 @@ fun NavGraph() {
         AppLogger.userAction(TAG, "页面导航", "route=${destination.route}, args=$arguments")
     }
 
-    val sharedEnterTransition = fadeIn(tween(Motion.Duration.Normal)) +
-            scaleIn(
-                initialScale = 0.985f,
-                animationSpec = tween(Motion.Duration.Normal)
-            )
+    val sharedEnterTransition = slideInHorizontally(
+            initialOffsetX = { it },
+            animationSpec = tween(Motion.Duration.Normal)
+        )
 
-    val sharedExitTransition = fadeOut(tween(Motion.Duration.Fast)) +
-            scaleOut(
-                targetScale = 0.985f,
-                animationSpec = tween(Motion.Duration.Fast)
-            )
+    val sharedExitTransition = slideOutHorizontally(
+            targetOffsetX = { -it },
+            animationSpec = tween(Motion.Duration.Normal)
+        )
 
 
 
-    val previewEnterTransition = fadeIn(tween(Motion.Duration.Normal)) +
-            scaleIn(
-                initialScale = 0.97f,
-                animationSpec = tween(Motion.Duration.Normal)
-            )
+    val previewEnterTransition = slideInHorizontally(
+            initialOffsetX = { it },
+            animationSpec = tween(Motion.Duration.Normal)
+        )
 
-    val previewExitTransition = fadeOut(tween(Motion.Duration.Fast)) +
-            scaleOut(
-                targetScale = 0.97f,
-                animationSpec = tween(Motion.Duration.Fast)
-            )
+    val previewExitTransition = slideOutHorizontally(
+            targetOffsetX = { -it },
+            animationSpec = tween(Motion.Duration.Normal)
+        )
 
     NavHost(
         navController = navController,
         startDestination = Routes.GALLERY,
         enterTransition = { sharedEnterTransition },
         exitTransition = { sharedExitTransition },
-        popEnterTransition = { sharedEnterTransition },
-        popExitTransition = { sharedExitTransition }
+        popEnterTransition = { slideInHorizontally(
+            initialOffsetX = { -it },
+            animationSpec = tween(Motion.Duration.Normal)
+        ) },
+        popExitTransition = { slideOutHorizontally(
+            targetOffsetX = { it },
+            animationSpec = tween(Motion.Duration.Normal)
+        ) }
     ) {
         composable(Routes.GALLERY) {
             GalleryScreen(

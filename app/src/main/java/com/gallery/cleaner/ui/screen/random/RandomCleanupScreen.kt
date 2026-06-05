@@ -209,16 +209,14 @@ fun RandomCleanupScreen(
 
 
 
-    LaunchedEffect(uiState.deleteSuccess, uiState.deleteMessage) {
-
-        if (uiState.deleteMessage.isNotBlank()) {
-
-            snackbarHostState.showSnackbar(uiState.deleteMessage)
-
-            viewModel.dismissResultMessage()
-
+    LaunchedEffect(uiState.deleteMessage) {
+        val message = uiState.deleteMessage
+        if (message.isNotBlank()) {
+            val result = snackbarHostState.showSnackbar(message)
+            if (result == androidx.compose.material3.SnackbarResult.Dismissed || result == androidx.compose.material3.SnackbarResult.ActionPerformed) {
+                viewModel.dismissResultMessage()
+            }
         }
-
     }
 
 

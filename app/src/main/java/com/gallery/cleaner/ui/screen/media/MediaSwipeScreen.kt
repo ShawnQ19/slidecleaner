@@ -1,6 +1,5 @@
 package com.gallery.cleaner.ui.screen.media
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -19,8 +18,6 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -53,7 +50,6 @@ import com.gallery.cleaner.ui.component.AppPadding
 import com.gallery.cleaner.ui.component.AppShape
 import com.gallery.cleaner.ui.component.GlassCard
 import com.gallery.cleaner.ui.component.GlassTopBar
-import com.gallery.cleaner.ui.component.Motion
 import com.gallery.cleaner.ui.theme.AppColors
 
 private const val TAG = "MediaSwipeScreen"
@@ -67,8 +63,6 @@ fun MediaSwipeScreen(
     viewModel: MediaSwipeViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val canUndo by viewModel.undoManager.canUndo.collectAsState()
-    val canRedo by viewModel.undoManager.canRedo.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
     val density = LocalDensity.current
     var topBarHeight by remember { mutableStateOf(0) }
@@ -90,10 +84,13 @@ fun MediaSwipeScreen(
         }
     }
 
-    LaunchedEffect(uiState.deleteSuccess, uiState.deleteMessage) {
-        if (uiState.deleteMessage.isNotEmpty()) {
-            snackbarHostState.showSnackbar(uiState.deleteMessage)
-            viewModel.dismissResultMessage()
+    LaunchedEffect(uiState.deleteMessage) {
+        val message = uiState.deleteMessage
+        if (message.isNotEmpty()) {
+            val result = snackbarHostState.showSnackbar(message)
+            if (result == androidx.compose.material3.SnackbarResult.Dismissed || result == androidx.compose.material3.SnackbarResult.ActionPerformed) {
+                viewModel.dismissResultMessage()
+            }
         }
     }
 
@@ -190,9 +187,7 @@ fun MediaSwipeScreen(
                     SwipeStatusStrip(
                         currentIndex = uiState.currentIndex + 1,
                         totalCount = uiState.items.size,
-                        queuedCount = uiState.deleteQueue.items.size,
-                        canUndo = canUndo,
-                        canRedo = canRedo
+                        queuedCount = uiState.deleteQueue.items.size
                     )
 
                     LinearProgressIndicator(
@@ -260,26 +255,7 @@ fun MediaSwipeScreen(
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "返回", tint = AppColors.TextPrimary)
                     }
                 },
-                actions = {
-                    AnimatedVisibility(
-                        visible = canUndo,
-                        enter = Motion.Enter.slideInFromTop(),
-                        exit = Motion.Exit.slideOutToTop()
-                    ) {
-                        IconButton(onClick = { viewModel.undo() }) {
-                            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "撤销", tint = AppColors.Primary)
-                        }
-                    }
-                    AnimatedVisibility(
-                        visible = canRedo,
-                        enter = Motion.Enter.slideInFromTop(),
-                        exit = Motion.Exit.slideOutToTop()
-                    ) {
-                        IconButton(onClick = { viewModel.redo() }) {
-                            Icon(Icons.Default.Refresh, contentDescription = "重做", tint = AppColors.Accent)
-                        }
-                    }
-                },
+                actions = {},
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = Color.Transparent,
                     titleContentColor = AppColors.TextPrimary,
@@ -318,9 +294,7 @@ fun MediaSwipeScreen(
 private fun SwipeStatusStrip(
     currentIndex: Int,
     totalCount: Int,
-    queuedCount: Int,
-    canUndo: Boolean,
-    canRedo: Boolean
+    queuedCount: Int
 ) {
     GlassCard(
         modifier = Modifier
@@ -357,16 +331,7 @@ private fun SwipeStatusStrip(
                 )
             }
 
-            Row(horizontalArrangement = Arrangement.spacedBy(AppPadding.XS)) {
-                SwipeStatusChip(
-                    label = if (canUndo) "UNDO ON" else "UNDO",
-                    tint = if (canUndo) AppColors.Primary else AppColors.TextDisabled
-                )
-                SwipeStatusChip(
-                    label = if (canRedo) "REDO ON" else "REDO",
-                    tint = if (canRedo) AppColors.Accent else AppColors.TextDisabled
-                )
-            }
+
         }
     }
 }
