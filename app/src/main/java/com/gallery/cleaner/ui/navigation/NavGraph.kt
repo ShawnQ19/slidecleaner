@@ -35,29 +35,19 @@ fun NavGraph() {
         AppLogger.userAction(TAG, "页面导航", "route=${destination.route}, args=$arguments")
     }
 
-    val forwardEnterTransition = fadeIn(tween(Motion.Duration.Normal)) +
+    val sharedEnterTransition = fadeIn(tween(Motion.Duration.Normal)) +
             scaleIn(
                 initialScale = 0.985f,
                 animationSpec = tween(Motion.Duration.Normal)
             )
 
-    val forwardExitTransition = fadeOut(tween(Motion.Duration.Fast)) +
+    val sharedExitTransition = fadeOut(tween(Motion.Duration.Fast)) +
             scaleOut(
                 targetScale = 0.985f,
                 animationSpec = tween(Motion.Duration.Fast)
             )
 
-    val backwardEnterTransition = fadeIn(tween(Motion.Duration.Normal)) +
-            scaleIn(
-                initialScale = 0.985f,
-                animationSpec = tween(Motion.Duration.Normal)
-            )
 
-    val backwardExitTransition = fadeOut(tween(Motion.Duration.Fast)) +
-            scaleOut(
-                targetScale = 0.985f,
-                animationSpec = tween(Motion.Duration.Fast)
-            )
 
     val previewEnterTransition = fadeIn(tween(Motion.Duration.Normal)) +
             scaleIn(
@@ -74,10 +64,10 @@ fun NavGraph() {
     NavHost(
         navController = navController,
         startDestination = Routes.GALLERY,
-        enterTransition = { forwardEnterTransition },
-        exitTransition = { forwardExitTransition },
-        popEnterTransition = { backwardEnterTransition },
-        popExitTransition = { backwardExitTransition }
+        enterTransition = { sharedEnterTransition },
+        exitTransition = { sharedExitTransition },
+        popEnterTransition = { sharedEnterTransition },
+        popExitTransition = { sharedExitTransition }
     ) {
         composable(Routes.GALLERY) {
             GalleryScreen(
@@ -105,10 +95,10 @@ fun NavGraph() {
         }
         composable(
             route = Routes.PROCESSED_GALLERY,
-            enterTransition = { forwardEnterTransition },
-            exitTransition = { forwardExitTransition },
-            popEnterTransition = { backwardEnterTransition },
-            popExitTransition = { backwardExitTransition }
+            enterTransition = { sharedEnterTransition },
+            exitTransition = { sharedExitTransition },
+            popEnterTransition = { sharedEnterTransition },
+            popExitTransition = { sharedExitTransition }
         ) {
             ProcessedGalleryScreen(
                 onBackClick = { navController.popBackStack() },
@@ -121,10 +111,10 @@ fun NavGraph() {
         composable(
             route = Routes.MEDIA_SWIPE,
             arguments = listOf(navArgument("yearMonth") { type = NavType.StringType }),
-            enterTransition = { forwardEnterTransition },
-            exitTransition = { forwardExitTransition },
-            popEnterTransition = { backwardEnterTransition },
-            popExitTransition = { backwardExitTransition }
+            enterTransition = { sharedEnterTransition },
+            exitTransition = { sharedExitTransition },
+            popEnterTransition = { sharedEnterTransition },
+            popExitTransition = { sharedExitTransition }
         ) { backStackEntry ->
             val yearMonth = backStackEntry.arguments?.getString("yearMonth") ?: ""
             MediaSwipeScreen(
@@ -139,10 +129,10 @@ fun NavGraph() {
         composable(
             route = Routes.PROCESSED_MONTH,
             arguments = listOf(navArgument("yearMonth") { type = NavType.StringType }),
-            enterTransition = { forwardEnterTransition },
-            exitTransition = { forwardExitTransition },
-            popEnterTransition = { backwardEnterTransition },
-            popExitTransition = { backwardExitTransition }
+            enterTransition = { sharedEnterTransition },
+            exitTransition = { sharedExitTransition },
+            popEnterTransition = { sharedEnterTransition },
+            popExitTransition = { sharedExitTransition }
         ) { backStackEntry ->
             val yearMonth = backStackEntry.arguments?.getString("yearMonth") ?: ""
             ProcessedMonthScreen(
@@ -159,8 +149,8 @@ fun NavGraph() {
             arguments = listOf(navArgument("mediaId") { type = NavType.LongType }),
             enterTransition = { previewEnterTransition },
             exitTransition = { previewExitTransition },
-            popEnterTransition = { backwardEnterTransition },
-            popExitTransition = { backwardExitTransition }
+            popEnterTransition = { sharedEnterTransition },
+            popExitTransition = { sharedExitTransition }
         ) { backStackEntry ->
             val mediaId = backStackEntry.arguments?.getLong("mediaId") ?: 0L
             PreviewScreen(
@@ -170,10 +160,10 @@ fun NavGraph() {
         }
         composable(
             route = Routes.RANDOM_CLEANUP,
-            enterTransition = { forwardEnterTransition },
-            exitTransition = { forwardExitTransition },
-            popEnterTransition = { backwardEnterTransition },
-            popExitTransition = { backwardExitTransition }
+            enterTransition = { sharedEnterTransition },
+            exitTransition = { sharedExitTransition },
+            popEnterTransition = { sharedEnterTransition },
+            popExitTransition = { sharedExitTransition }
         ) {
             RandomCleanupScreen(
                 onBackClick = { navController.popBackStack() },
@@ -185,10 +175,10 @@ fun NavGraph() {
         }
         composable(
             route = Routes.TRASH,
-            enterTransition = { forwardEnterTransition },
-            exitTransition = { forwardExitTransition },
-            popEnterTransition = { backwardEnterTransition },
-            popExitTransition = { backwardExitTransition }
+            enterTransition = { sharedEnterTransition },
+            exitTransition = { sharedExitTransition },
+            popEnterTransition = { sharedEnterTransition },
+            popExitTransition = { sharedExitTransition }
         ) {
             TrashScreen(
                 onBackClick = { navController.popBackStack() }
@@ -196,10 +186,10 @@ fun NavGraph() {
         }
         composable(
             route = Routes.THEME_SETTINGS,
-            enterTransition = { forwardEnterTransition },
-            exitTransition = { forwardExitTransition },
-            popEnterTransition = { backwardEnterTransition },
-            popExitTransition = { backwardExitTransition }
+            enterTransition = { sharedEnterTransition },
+            exitTransition = { sharedExitTransition },
+            popEnterTransition = { sharedEnterTransition },
+            popExitTransition = { sharedExitTransition }
         ) {
             ThemeSettingsScreen(
                 onBackClick = { navController.popBackStack() }

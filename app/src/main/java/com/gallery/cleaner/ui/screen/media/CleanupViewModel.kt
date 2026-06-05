@@ -159,14 +159,17 @@ abstract class CleanupViewModel(
 
     protected open fun handleDeleteSuccess(result: TrashResult.Success) {
         AppLogger.i(TAG, "删除成功: ${result.deletedCount} 项")
+        val message = if (deleteMediaUseCase.repository.isTrashSupported()) {
+            "已移入系统回收站 ${result.deletedCount} 项"
+        } else {
+            "已永久删除 ${result.deletedCount} 项"
+        }
+        _deleteQueueItems.clear()
+        undoManager.clear()
+        updateDeleteQueue()
         finalizeKeptItems()
-        finalizeDeleteQueue(
-            message = if (deleteMediaUseCase.repository.isTrashSupported()) {
-                "已移入系统回收站 ${result.deletedCount} 项"
-            } else {
-                "已永久删除 ${result.deletedCount} 项"
-            }
-        )
+        _uiState.update { it.copy(showDeleteDialog = false, deleteSuccess = true, deleteMessage = message) }
+        onAfterDeleteSuccess()
     }
 
     protected open fun handleDeleteError(result: TrashResult.Error) {
@@ -179,12 +182,7 @@ abstract class CleanupViewModel(
     protected open fun onAfterDeleteSuccess() {}
 
     protected fun finalizeDeleteQueue(message: String) {
-        _deleteQueueItems.clear()
-        updateDeleteQueue()
-        undoManager.clear()
-        _uiState.update {
-            it.copy(showDeleteDialog = false, deleteSuccess = true, deleteMessage = message)
-        }
+        _uiState.update { it.copy(showDeleteDialog = false, deleteSuccess = true, deleteMessage = message) }
         onAfterDeleteSuccess()
     }
 

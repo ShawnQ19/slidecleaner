@@ -118,6 +118,9 @@ fun MotionPhotoPlayer(
                 AppLogger.i(TAG, "释放 ExoPlayer")
                 player.release()
                 exoPlayer = null
+                if (currentUri is android.net.Uri && currentUri.scheme == "file") {
+                    try { java.io.File(currentUri.path!!).delete() } catch (_: Exception) {}
+                }
             }
         }
     }
