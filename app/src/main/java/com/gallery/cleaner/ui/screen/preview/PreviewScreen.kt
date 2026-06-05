@@ -61,7 +61,10 @@ import com.gallery.cleaner.ui.component.GlassTopBar
 import com.gallery.cleaner.ui.component.Motion
 import com.gallery.cleaner.ui.component.pressClick
 import com.gallery.cleaner.ui.theme.AppColors
-import kotlinx.coroutines.runBlocking
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 private const val MIN_PREVIEW_SCALE = 1f
 private const val MAX_PREVIEW_SCALE = 5f
@@ -147,8 +150,11 @@ fun PreviewScreen(
                                     )
                                 }
                                 val context = LocalContext.current
+                                val scope = rememberCoroutineScope()
                                 IconButton(onClick = {
-                                    exportLogs(context, previewSnackbarHostState)
+                                    scope.launch {
+                                        exportLogs(context, previewSnackbarHostState)
+                                    }
                                 }) {
                                     Icon(
                                         imageVector = Icons.Default.Refresh,
@@ -386,23 +392,21 @@ private fun formatFileSize(size: Long): String {
 }
 
 
-private fun exportLogs(context: android.content.Context, snackbarHostState: SnackbarHostState) {
-    runBlocking {
-        try {
+private suspend fun exportLogs(context: android.content.Context, snackbarHostState: SnackbarHostState) {
+    try {
             com.gallery.cleaner.util.log.AppLogger.flush()
             val logFiles = com.gallery.cleaner.util.log.AppLogger.getLogFiles()
             if (logFiles.isEmpty()) {
-                snackbarHostState.showSnackbar("\u6682\u65e0\u65e5\u5fd7")
-                return@runBlocking
+                withContext(Dispatchers.Main) { snackbarHostState.showSnackbar("\u6682\u65e0\u65e5\u5fd7") }
+                return
             }
-            val exportDir = java.io.File(context.getExternalFilesDir(null), "log_export")
+            val exportDir = java.io.File(context.getExternalFilesDir(null) ?: context.filesDir, "log_export")
             if (!exportDir.exists()) exportDir.mkdirs()
             val logFile = logFiles.first()
             val exportFile = java.io.File(exportDir, logFile.name)
             logFile.copyTo(exportFile, overwrite = true)
-            snackbarHostState.showSnackbar("\u65e5\u5fd7\u5df2\u5bfc\u51fa: ${exportFile.absolutePath}")
+            withContext(Dispatchers.Main) { snackbarHostState.showSnackbar("\u65e5\u5fd7\u5df2\u5bfc\u51fa: ${exportFile.absolutePath}") }
         } catch (e: Exception) {
-            snackbarHostState.showSnackbar("\u5bfc\u51fa\u5931\u8d25: ${e.message}")
+            withContext(Dispatchers.Main) { snackbarHostState.showSnackbar("\u5bfc\u51fa\u5931\u8d25: ${e.message}") }
         }
     }
-}

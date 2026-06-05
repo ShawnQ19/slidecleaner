@@ -76,25 +76,7 @@ fun MotionPhotoPlayer(
         AppLogger.i(TAG, "LaunchedEffect: 视频URI准备完成, videoUri=$videoUri")
     }
 
-    val exoPlayer = remember(videoUri) {
-        AppLogger.i(TAG, "创建 ExoPlayer: videoUri=$videoUri")
-        videoUri?.let { uri ->
-            ExoPlayer.Builder(context).build().apply {
-                setMediaItem(ExoMediaItem.fromUri(uri))
-                addListener(object : androidx.media3.common.Player.Listener {
-                    override fun onPlaybackStateChanged(playbackState: Int) {
-                        AppLogger.i(TAG, "ExoPlayer state: $playbackState")
-                    }
-                    override fun onPlayerError(error: PlaybackException) {
-                        AppLogger.e(TAG, "ExoPlayer error: ${error.message}, code=${error.errorCode}")
-                    }
-                })
-                prepare()
-                repeatMode = ExoPlayer.REPEAT_MODE_ONE
-                playWhenReady = false
-            }
-        }
-    }
+    var exoPlayer by remember { mutableStateOf<ExoPlayer?>(null) }
 
     val transformState = rememberTransformableState { zoomChange, panChange, _ ->
         val newScale = (scale * zoomChange).coerceIn(LIVE_PHOTO_MIN_SCALE, LIVE_PHOTO_MAX_SCALE)
@@ -109,14 +91,38 @@ fun MotionPhotoPlayer(
         }
     }
 
-    DisposableEffect(exoPlayer) {
-        onDispose {
-            AppLogger.i(TAG, "释放 ExoPlayer")
-            exoPlayer?.release()
+    // 当 videoUri 变化时创建/重建 ExoPlayer
+    DisposableEffect(videoUri) {
+        val currentUri = videoUri
+        if (currentUri == null) {
+            exoPlayer = null
+            onDispose { }
+        } else {
+            AppLogger.i(TAG, "创建 ExoPlayer: videoUri=$currentUri")
+            val player = ExoPlayer.Builder(context).build().apply {
+                setMediaItem(ExoMediaItem.fromUri(currentUri))
+                addListener(object : androidx.media3.common.Player.Listener {
+                    override fun onPlaybackStateChanged(playbackState: Int) {
+                        AppLogger.i(TAG, "ExoPlayer state: $playbackState")
+                    }
+                    override fun onPlayerError(error: PlaybackException) {
+                        AppLogger.e(TAG, "ExoPlayer error: ${error.message}, code=${error.errorCode}")
+                    }
+                })
+                prepare()
+                repeatMode = ExoPlayer.REPEAT_MODE_ONE
+                playWhenReady = false
+            }
+            exoPlayer = player
+            onDispose {
+                AppLogger.i(TAG, "释放 ExoPlayer")
+                player.release()
+                exoPlayer = null
+            }
         }
     }
 
-    androidx.compose.runtime.LaunchedEffect(isPlaying, exoPlayer) {
+    androidx.compose.runtime.LaunchedEffect(isPlaying) {
         AppLogger.i(TAG, "播放状态变化: isPlaying=$isPlaying, exoPlayer=${exoPlayer != null}")
         exoPlayer?.playWhenReady = isPlaying
         if (!isPlaying) {

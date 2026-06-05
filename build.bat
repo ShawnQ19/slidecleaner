@@ -99,6 +99,11 @@ if errorlevel 1 (
     exit /b 1
 )
 
+:: 删除旧的 APK 和 build_log
+echo [INFO] 清理旧的 APK 和日志...
+del /Q GalleryCleaner-*.apk build_log*.txt 2>nul
+echo.
+
 :: 查找输出 APK
 set "APK_DIR=app\build\outputs\apk\%BUILD_TYPE%"
 set "APK_FILE="

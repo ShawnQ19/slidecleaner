@@ -514,7 +514,9 @@ fun RandomCleanupScreen(
 
                 title = "确认删除",
 
-                text = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+                text = if (uiState.batchItems.isEmpty()) {
+                    "已清理完本组照片，确认删除已加入删除队列的 ${uiState.deleteQueue.items.size} 个项目吗？"
+                } else if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
 
                     "确定要将 ${uiState.deleteQueue.items.size} 个项目移入系统回收站吗？可在应用内回收站或系统相册的\"最近删除\"中查看和恢复。"
 

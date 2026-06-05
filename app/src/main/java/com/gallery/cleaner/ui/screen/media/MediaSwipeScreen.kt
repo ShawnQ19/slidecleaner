@@ -279,11 +279,6 @@ fun MediaSwipeScreen(
                             Icon(Icons.Default.Refresh, contentDescription = "重做", tint = AppColors.Accent)
                         }
                     }
-                    if (uiState.deleteQueue.items.isNotEmpty()) {
-                        IconButton(onClick = { viewModel.showDeleteConfirmDialog() }) {
-                            Icon(Icons.Default.CheckCircle, contentDescription = "确认删除", tint = AppColors.Destructive)
-                        }
-                    }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = Color.Transparent,

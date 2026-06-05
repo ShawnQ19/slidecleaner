@@ -195,32 +195,11 @@ class MediaSwipeViewModel @Inject constructor(
     fun keepCurrent(silent: Boolean = false) {
         val item = _uiState.value.mediaItems.getOrNull(_uiState.value.currentIndex) ?: return
         if (_uiState.value.showDeleteDialog) return
-        val oldIndex = _uiState.value.currentIndex
-
         viewModelScope.launch {
-            try {
-                val command = object : UndoCommand {
-                    override val description: String = "保留 ${item.name}"
-
-                    override suspend fun execute() {
-                        executeKeepCurrent(item, oldIndex)
-                    }
-
-                    override suspend fun undo() {
-                        restoreKeptItem(item, oldIndex, silent)
-                    }
-                }
-                undoManager.execute(command)
-            } catch (e: Exception) {
-                AppLogger.exception(TAG, "保留处理失败", e)
-                _uiState.update {
-                    it.copy(
-                        error = e.message ?: "保留处理失败"
-                    )
-                }
-            }
+            executeKeepCurrent(item, _uiState.value.currentIndex)
         }
     }
+
 
     fun showDeleteConfirmDialog() {
         AppLogger.d(TAG, "显示删除确认对话框")

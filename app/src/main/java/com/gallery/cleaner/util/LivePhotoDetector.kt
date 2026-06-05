@@ -157,7 +157,7 @@ object LivePhotoDetector {
 
     private fun parseFooter(footer: String): LivePhotoInfo? {
         return when {
-            footer.contains("vivo{") -> {
+            footer.contains("vivo{") && footer.contains("LivePhoto") -> {
                 LivePhotoInfo(type = LivePhotoType.VIVO)
             }
             footer.contains("LIVE_") -> {
