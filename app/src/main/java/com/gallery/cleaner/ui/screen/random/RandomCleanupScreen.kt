@@ -440,24 +440,6 @@ fun RandomCleanupScreen(
 
                 actions = {
 
-                    if (uiState.deleteQueue.items.isNotEmpty()) {
-
-                        IconButton(onClick = { viewModel.showDeleteConfirmDialog() }) {
-
-                            Icon(
-
-                                imageVector = Icons.Default.Delete,
-
-                                contentDescription = "确认删除",
-
-                                tint = AppColors.Destructive
-
-                            )
-
-                        }
-
-                    }
-
                     IconButton(onClick = { viewModel.refreshBatch() }) {
 
                         Icon(
