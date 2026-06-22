@@ -8,17 +8,18 @@ data class CleanupUiState(
     val currentIndex: Int = 0,
     val deleteQueue: DeleteQueue = DeleteQueue(),
     val processedCount: Int = 0,
+    val batchTotal: Int = 0,
     val isLoading: Boolean = false,
     val error: String? = null,
     val showDeleteDialog: Boolean = false,
-    val showBatchCompleteDialog: Boolean = false,
     val deleteSuccess: Boolean = false,
     val deleteMessage: String = ""
 ) {
     val currentItem: MediaItem? get() = items.getOrNull(currentIndex)
     val remainingInBatch: Int get() = items.size
-    val isBusy: Boolean get() = showDeleteDialog || showBatchCompleteDialog
+    val isBusy: Boolean get() = showDeleteDialog
     val isBatchComplete: Boolean get() = !isLoading && items.isEmpty() && !showDeleteDialog
+    val keptCount: Int get() = batchTotal - deleteQueue.items.size - items.size
 }
 
 typealias MediaSwipeUiState = CleanupUiState

@@ -63,6 +63,7 @@ import com.gallery.cleaner.ui.component.GlassCard
 import com.gallery.cleaner.ui.component.GlassDialog
 import com.gallery.cleaner.ui.component.GlassTopBar
 import com.gallery.cleaner.ui.component.Motion
+import com.gallery.cleaner.ui.component.BatchCompleteContent
 import com.gallery.cleaner.ui.screen.media.DeleteQueueBar
 import com.gallery.cleaner.ui.screen.media.SwipeableMediaCard
 import com.gallery.cleaner.ui.theme.AppColors
@@ -157,7 +158,7 @@ fun RandomCleanupScreen(
                 )
             }
 
-            uiState.currentItem == null && !uiState.showBatchCompleteDialog -> {
+            uiState.currentItem == null -> {
                 EmptyRandomState(
                     processedCount = uiState.processedCount,
                     onShuffle = { viewModel.refreshBatch() }
@@ -315,32 +316,8 @@ fun RandomCleanupScreen(
             )
         }
 
-        if (uiState.showBatchCompleteDialog) {
-            com.gallery.cleaner.ui.component.GlassDialog(
-                onDismissRequest = { viewModel.dismissBatchCompleteDialog() },
-                title = "本轮清理完成",
-                text = buildString {
-                    append("已处理完本批次所有照片。")
-                    if (uiState.deleteQueue.items.isNotEmpty()) {
-                        append("\n\n当前删除队列中有 ${uiState.deleteQueue.items.size} 项等待删除。")
-                    }
-                },
-                confirmText = if (uiState.deleteQueue.items.isNotEmpty()) "确认删除" else "继续下一批",
-                isDestructive = uiState.deleteQueue.items.isNotEmpty(),
-                onConfirm = {
-                    if (uiState.deleteQueue.items.isNotEmpty()) {
-                        viewModel.confirmDeleteFromComplete()
-                    } else {
-                        viewModel.loadNextBatch()
-                    }
-                },
-                dismissText = "退出",
-                onDismiss = {
-                    viewModel.dismissBatchCompleteDialog()
-                    onBackClick()
-                }
-            )
-        }
+
+
     }
 }
 

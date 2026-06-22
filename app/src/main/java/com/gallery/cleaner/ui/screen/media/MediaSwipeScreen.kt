@@ -46,6 +46,7 @@ import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.gallery.cleaner.domain.model.DeleteQueue
 import com.gallery.cleaner.ui.component.AppPadding
+import com.gallery.cleaner.ui.component.BatchCompleteContent
 import com.gallery.cleaner.ui.component.AppShape
 import com.gallery.cleaner.ui.component.GlassCard
 import com.gallery.cleaner.ui.component.GlassDialog
@@ -144,34 +145,17 @@ fun MediaSwipeScreen(
                 }
             }
 
-            uiState.items.isEmpty() -> {
-                GlassCard(
-                    modifier = Modifier.fillMaxSize().padding(32.dp),
-                    shape = AppShape.XLarge,
-                    contentPadding = AppPadding.XXL
-                ) {
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(AppPadding.MD)
-                    ) {
-                        Text(
-                            text = "SWIPE SEQUENCE COMPLETE",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = AppColors.TextTertiary,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                        Text(
-                            text = "本月照片已整理完毕",
-                            style = MaterialTheme.typography.headlineSmall,
-                            color = AppColors.TextPrimary,
-                            fontWeight = FontWeight.Black
-                        )
-                        Text(
-                            text = "向上滑动即可继续处理其他月份的媒体。",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = AppColors.TextSecondary
-                        )
+            uiState.isBatchComplete -> {
+                BatchCompleteContent(
+                    batchTotal = uiState.batchTotal,
+                    keptCount = uiState.keptCount,
+                    queuedCount = uiState.deleteQueue.items.size,
+                    onConfirmDelete = { viewModel.showDeleteConfirmDialog() },
+                    onExit = {
+                        viewModel.onBackPressed()
+                        onBackClick()
                     }
-                }
+                )
             }
 
             else -> {

@@ -46,6 +46,7 @@ class MediaSwipeViewModel @Inject constructor(
                 _uiState.update {
                     it.copy(
                         items = items,
+                        batchTotal = items.size,
                         deleteQueue = DeleteQueue(
                             items = _deleteQueueItems.toList(),
                             currentMonth = yearMonth,

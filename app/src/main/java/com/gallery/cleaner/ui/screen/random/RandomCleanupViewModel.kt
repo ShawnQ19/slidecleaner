@@ -31,28 +31,23 @@ class RandomCleanupViewModel @Inject constructor(
         loadBatch()
     }
 
-    fun loadBatch(preserveResultMessage: Boolean = false) {
+    fun loadBatch() {
         if (_uiState.value.isLoading) return
 
         viewModelScope.launch {
             try {
-                _uiState.update {
-                    it.copy(
-                        isLoading = true,
-                        error = null,
-                        deleteMessage = if (preserveResultMessage) it.deleteMessage else "",
-                        deleteSuccess = if (preserveResultMessage) it.deleteSuccess else false
-                    )
-                }
+                _uiState.update { it.copy(isLoading = true, error = null) }
                 val processedUris = processedMediaStore.getProcessedUris()
                 val items = mediaRepository.getRandomMediaItems(processedUris, DeleteQueue.MAX_QUEUE_SIZE)
                 AppLogger.dataChange(TAG, "加载随机批次", "processed=${processedUris.size}, items=${items.size}")
                 _deleteQueueItems.clear()
+                keptItems.clear()
                 undoManager.clear()
                 _uiState.update {
                     it.copy(
                         items = items,
                         currentIndex = 0,
+                        batchTotal = items.size,
                         deleteQueue = DeleteQueue(
                             items = emptyList(),
                             currentMonth = null,
@@ -85,46 +80,13 @@ class RandomCleanupViewModel @Inject constructor(
                 "已永久删除 ${result.deletedCount} 项"
             }
         )
-        checkBatchComplete()
-    }
-
-    override fun executeQueueForDelete(item: com.gallery.cleaner.domain.model.MediaItem, removedIndex: Int, oldIndex: Int) {
-        super.executeQueueForDelete(item, removedIndex, oldIndex)
-        val state = _uiState.value
-        if (state.items.isEmpty()) {
-            _uiState.update { it.copy(showDeleteDialog = false) }
-            checkBatchComplete()
-        }
-    }
-
-    override fun keepCurrent(silent: Boolean) {
-        super.keepCurrent(silent)
-        checkBatchComplete()
-    }
-
-    private fun checkBatchComplete() {
-        val state = _uiState.value
-        if (!state.isLoading && state.items.isEmpty() && !state.showDeleteDialog && !state.showBatchCompleteDialog) {
-            _uiState.update { it.copy(showBatchCompleteDialog = true) }
-        }
-    }
-
-    fun dismissBatchCompleteDialog() {
-        _uiState.update { it.copy(showBatchCompleteDialog = false) }
     }
 
     fun loadNextBatch() {
-        _uiState.update { it.copy(showBatchCompleteDialog = false) }
         loadBatch()
     }
 
-    fun confirmDeleteFromComplete() {
-        _uiState.update { it.copy(showBatchCompleteDialog = false) }
-        confirmDelete()
-    }
-
     fun refreshBatch() {
-        _uiState.update { it.copy(showBatchCompleteDialog = false) }
         loadBatch()
     }
 }

@@ -76,7 +76,7 @@ abstract class CleanupViewModel(
         val newIndex = computeNewIndex(items, removedIndex, oldIndex)
         _uiState.update { it.copy(items = items, currentIndex = newIndex, showDeleteDialog = false) }
         updateDeleteQueue()
-        if (_deleteQueueItems.size >= DeleteQueue.MAX_QUEUE_SIZE || items.isEmpty()) {
+        if (_deleteQueueItems.size >= DeleteQueue.MAX_QUEUE_SIZE) {
             _uiState.update { it.copy(showDeleteDialog = true) }
         }
     }
