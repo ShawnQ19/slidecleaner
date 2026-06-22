@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 
 abstract class CleanupViewModel(
@@ -30,8 +31,8 @@ abstract class CleanupViewModel(
     protected val _uiState = MutableStateFlow(CleanupUiState())
     abstract val uiState: StateFlow<CleanupUiState>
 
-    protected val _deleteQueueItems = mutableSetOf<MediaItem>()
-    protected val keptItems = mutableSetOf<MediaItem>()
+    protected val _deleteQueueItems = ConcurrentHashMap.newKeySet<MediaItem>()
+    protected val keptItems = ConcurrentHashMap.newKeySet<MediaItem>()
     val undoManager = UndoManager(maxHistory = 10)
 
     protected val currentItems: List<MediaItem>
@@ -107,7 +108,7 @@ abstract class CleanupViewModel(
         }
     }
 
-    fun keepCurrent(silent: Boolean = false) {
+    open fun keepCurrent(silent: Boolean = false) {
         val item = _uiState.value.currentItem ?: return
         if (_uiState.value.showDeleteDialog) return
         viewModelScope.launch {
@@ -168,21 +169,37 @@ abstract class CleanupViewModel(
         undoManager.clear()
         updateDeleteQueue()
         finalizeKeptItems()
-        _uiState.update { it.copy(showDeleteDialog = false, deleteSuccess = true, deleteMessage = message) }
+        _uiState.update {
+            it.copy(
+                showDeleteDialog = false,
+                deleteSuccess = true,
+                deleteMessage = message
+            )
+        }
         onAfterDeleteSuccess()
     }
 
     protected open fun handleDeleteError(result: TrashResult.Error) {
         AppLogger.e(TAG, "删除失败: ${result.message}")
         _uiState.update {
-            it.copy(showDeleteDialog = false, deleteSuccess = false, deleteMessage = "删除失败: ${result.message}")
+            it.copy(
+                showDeleteDialog = false,
+                deleteSuccess = false,
+                deleteMessage = "删除失败: ${result.message}"
+            )
         }
     }
 
     protected open fun onAfterDeleteSuccess() {}
 
     protected fun finalizeDeleteQueue(message: String) {
-        _uiState.update { it.copy(showDeleteDialog = false, deleteSuccess = true, deleteMessage = message) }
+        _uiState.update {
+            it.copy(
+                showDeleteDialog = false,
+                deleteSuccess = true,
+                deleteMessage = message
+            )
+        }
         onAfterDeleteSuccess()
     }
 
@@ -206,7 +223,13 @@ abstract class CleanupViewModel(
             finalizeKeptItems()
             finalizeDeleteQueue("已移入系统回收站 $count 项")
         } else {
-            _uiState.update { it.copy(showDeleteDialog = false, deleteSuccess = false, deleteMessage = "用户取消了删除操作") }
+            _uiState.update {
+                it.copy(
+                    showDeleteDialog = false,
+                    deleteSuccess = false,
+                    deleteMessage = "用户取消了删除操作"
+                )
+            }
         }
         AppLogger.exit(TAG, "onTrashIntentResult")
     }
@@ -226,7 +249,13 @@ abstract class CleanupViewModel(
 
     protected fun updateDeleteQueue() {
         _uiState.update { state ->
-            state.copy(deleteQueue = DeleteQueue(items = _deleteQueueItems.toList(), currentMonth = state.deleteQueue.currentMonth, monthTotalCount = state.deleteQueue.monthTotalCount))
+            state.copy(
+                deleteQueue = DeleteQueue(
+                    items = _deleteQueueItems.toList(),
+                    currentMonth = state.deleteQueue.currentMonth,
+                    monthTotalCount = state.deleteQueue.monthTotalCount
+                )
+            )
         }
     }
 }

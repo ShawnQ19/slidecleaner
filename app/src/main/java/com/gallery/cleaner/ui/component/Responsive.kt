@@ -74,15 +74,6 @@ object Responsive {
             ScreenSize.Expanded -> 20.dp
         }
 
-    val monthCardPreviewHeight: Dp
-        @Composable
-        @ReadOnlyComposable
-        get() = when (screenSize) {
-            ScreenSize.Compact -> 120.dp
-            ScreenSize.Medium -> 160.dp
-            ScreenSize.Expanded -> 200.dp
-        }
-
     val monthCardPreviewCount: Int
         @Composable
         @ReadOnlyComposable

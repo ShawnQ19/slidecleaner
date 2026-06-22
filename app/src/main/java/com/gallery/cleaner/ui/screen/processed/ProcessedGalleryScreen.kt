@@ -1,17 +1,15 @@
 package com.gallery.cleaner.ui.screen.processed
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -48,6 +46,7 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.gallery.cleaner.ui.component.AppPadding
 import com.gallery.cleaner.ui.component.AppShape
@@ -56,7 +55,6 @@ import com.gallery.cleaner.ui.component.GlassDialog
 import com.gallery.cleaner.ui.component.GlassTopBar
 import com.gallery.cleaner.ui.component.Motion
 import com.gallery.cleaner.ui.component.Responsive
-import com.gallery.cleaner.ui.component.pressClick
 import com.gallery.cleaner.ui.permission.PermissionHandler
 import com.gallery.cleaner.ui.theme.AppColors
 
@@ -81,11 +79,17 @@ fun ProcessedGalleryScreen(
         Box(modifier = Modifier.fillMaxSize()) {
             when {
                 uiState.isInitialLoading -> {
-                    CircularProgressIndicator(
-                        modifier = Modifier.align(Alignment.Center),
-                        color = AppColors.Primary
-                    )
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(
+                            color = AppColors.Primary,
+                            strokeWidth = 3.dp
+                        )
+                    }
                 }
+
                 uiState.error != null -> {
                     Column(
                         modifier = Modifier
@@ -106,11 +110,12 @@ fun ProcessedGalleryScreen(
                             color = AppColors.TextSecondary
                         )
                         Spacer(modifier = Modifier.height(16.dp))
-                        androidx.compose.material3.Button(onClick = { viewModel.retry() }) {
+                        Button(onClick = { viewModel.retry() }) {
                             Text("重试")
                         }
                     }
                 }
+
                 !uiState.isLoading && uiState.groups.isEmpty() -> {
                     Column(
                         modifier = Modifier
@@ -132,11 +137,12 @@ fun ProcessedGalleryScreen(
                             color = AppColors.TextSecondary
                         )
                         Spacer(modifier = Modifier.height(16.dp))
-                        androidx.compose.material3.Button(onClick = onBackClick) {
+                        Button(onClick = onBackClick) {
                             Text("返回相册")
                         }
                     }
                 }
+
                 else -> {
                     val totalCount = uiState.groups.sumOf { it.mediaItems.size }
                     val monthCount = uiState.groups.size
@@ -168,27 +174,11 @@ fun ProcessedGalleryScreen(
                         itemsIndexed(
                             uiState.groups,
                             key = { _, group -> group.yearMonth.toString() }
-                        ) { index, group ->
+                        ) { _, group ->
                             com.gallery.cleaner.ui.screen.gallery.MonthCard(
                                 group = group,
-                                onClick = { onMonthClick(group.yearMonth.toString()) },
-                                index = index
+                                onClick = { onMonthClick(group.yearMonth.toString()) }
                             )
-                        }
-                    }
-
-                    AnimatedVisibility(
-                        visible = uiState.isLoading,
-                        enter = Motion.Enter.fadeIn(),
-                        exit = Motion.Exit.fadeOut()
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            CircularProgressIndicator(color = AppColors.Primary)
                         }
                     }
                 }
@@ -212,6 +202,7 @@ fun ProcessedGalleryScreen(
             GlassTopBar(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .zIndex(1f)
                     .onGloballyPositioned { topBarHeight = it.size.height }
             ) {
                 TopAppBar(
@@ -251,7 +242,7 @@ fun ProcessedGalleryScreen(
                                 modifier = Modifier.padding(end = 8.dp)
                             )
                             Text(
-                                text = "$totalCount 个项目",
+                                text = "$totalCount 项",
                                 style = MaterialTheme.typography.labelMedium,
                                 color = AppColors.TextTertiary,
                                 modifier = Modifier.padding(end = 16.dp)
@@ -323,19 +314,29 @@ private fun ProcessedGalleryHeroPanel(
                 color = AppColors.TextSecondary
             )
 
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(AppPadding.SM)
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(6.dp)
+                    .clip(AppShape.Pill)
+                    .background(AppColors.SurfaceOverlay.copy(alpha = 0.8f))
             ) {
-                StatTile(
-                    label = "总项目",
-                    value = totalCount.toString()
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(if (totalCount > 0) 0.78f else 0.18f)
+                        .fillMaxSize()
+                        .clip(AppShape.Pill)
+                        .background(AppColors.Accent)
                 )
-                StatTile(
-                    label = "月份",
-                    value = monthCount.toString()
-                )
-                StatTile(
+            }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(AppPadding.SM)
+            ) {
+                ProcessedStatTile(label = "总项目", value = totalCount.toString())
+                ProcessedStatTile(label = "月份", value = monthCount.toString())
+                ProcessedStatTile(
                     label = "月均",
                     value = if (monthCount > 0) averagePerMonth.toString() else "0"
                 )
@@ -350,7 +351,7 @@ private fun ProcessedGalleryHeroPanel(
                         containerColor = AppColors.Destructive,
                         contentColor = Color.White
                     ),
-                    contentPadding = androidx.compose.foundation.layout.PaddingValues(vertical = 12.dp)
+                    contentPadding = PaddingValues(vertical = 12.dp)
                 ) {
                     Icon(
                         imageVector = Icons.Default.Refresh,
@@ -370,13 +371,14 @@ private fun ProcessedGalleryHeroPanel(
 }
 
 @Composable
-private fun StatTile(
+private fun ProcessedStatTile(
     label: String,
     value: String,
     modifier: Modifier = Modifier
 ) {
     Box(
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier
+            .defaultMinSize(minWidth = 96.dp)
             .clip(AppShape.Medium)
             .background(AppColors.SurfaceElevated.copy(alpha = 0.78f))
             .border(1.dp, AppColors.Separator, AppShape.Medium)

@@ -5,6 +5,82 @@
 
 ---
 
+## [1.5.0] - 2026-06-12
+
+### 改进 (Changed)
+
+- **UI/UX 设计全面优化**
+  - 优化 GlassCard、GlassTopBar、GlassBottomBar 等玻璃拟态组件的视觉效果。
+  - 优化 MonthCard、StatTile 等卡片组件的布局和样式。
+  - 优化 HeroPanel 的按钮布局，使用 weight 均分宽度。
+  - 优化进度条动画效果，使用 animateFloatAsState 实现平滑过渡。
+  - 相关文件：[GlassComponents.kt](app/src/main/java/com/gallery/cleaner/ui/component/GlassComponents.kt)、[MonthCard.kt](app/src/main/java/com/gallery/cleaner/ui/screen/gallery/MonthCard.kt)、[GalleryScreen.kt](app/src/main/java/com/gallery/cleaner/ui/screen/gallery/GalleryScreen.kt)
+  - 负责人：开发团队
+
+- **动画系统增强**
+  - 新增 Motion.Duration.Fast (120ms) 精确快速动画。
+  - 新增 Motion.SpringSpec.Fluid 流体弹簧动画。
+  - 新增 slideInFromLeft/slideInFromRight 水平滑入动画。
+  - 新增 slideOutToLeft/slideOutToRight 水平滑出动画。
+  - 新增 staggeredFadeIn 列表交错入场动画。
+  - 优化所有动画弹簧参数，使用更流畅的 DampingRatioMediumBouncy。
+  - 相关文件：[Animations.kt](app/src/main/java/com/gallery/cleaner/ui/component/Animations.kt)
+  - 负责人：开发团队
+
+- **导航过渡优化**
+  - 预览页面使用 fadeIn + slideInHorizontally 组合过渡。
+  - 返回时使用 slideOutHorizontally + fadeOut 组合过渡。
+  - 统一命名 defaultEnterTransition/defaultExitTransition。
+  - 相关文件：[NavGraph.kt](app/src/main/java/com/gallery/cleaner/ui/navigation/NavGraph.kt)
+  - 负责人：开发团队
+
+- **媒体缩略图加载优化**
+  - 使用 SubcomposeAsyncImage 替代 AsyncImage，提供加载/错误状态处理。
+  - 添加加载状态占位符，提升用户体验。
+  - 相关文件：[MediaThumbnail.kt](app/src/main/java/com/gallery/cleaner/ui/component/MediaThumbnail.kt)
+  - 负责人：开发团队
+
+### 修复 (Fixed)
+
+- **并发安全问题**
+  - 将 CleanupViewModel 中的 _deleteQueueItems 和 keptItems 改为 ConcurrentHashMap.newKeySet()，解决多线程并发修改问题。
+  - 相关文件：[CleanupViewModel.kt](app/src/main/java/com/gallery/cleaner/ui/screen/media/CleanupViewModel.kt)
+  - 负责人：开发团队
+
+- **手势冲突修复**
+  - 明确分离 SwipeableMediaCard 中的缩放手势和上滑手势。
+  - 当图片被缩放时禁用上滑操作，避免误操作。
+  - 相关文件：[SwipeableMediaCard.kt](app/src/main/java/com/gallery/cleaner/ui/screen/media/SwipeableMediaCard.kt)
+  - 负责人：开发团队
+
+### 代码质量 (Code Quality)
+
+- **移除死代码**
+  - 删除 RandomCleanupScreen 中未使用的 RandomSummaryCard、RandomMediaBadge、RandomInfoBar 等组件。
+  - 删除 Responsive 中未使用的 monthCardPreviewHeight 变量。
+  - 删除 Animations.kt 中 scaleIn 未使用的 duration 参数。
+  - 删除 MonthCard 中未使用的 index 参数。
+  - 清理 MediaSwipeScreen 中未使用的 animatedProgress 变量。
+  - 相关文件：[RandomCleanupScreen.kt](app/src/main/java/com/gallery/cleaner/ui/screen/random/RandomCleanupScreen.kt)、[Responsive.kt](app/src/main/java/com/gallery/cleaner/ui/component/Responsive.kt)、[Animations.kt](app/src/main/java/com/gallery/cleaner/ui/component/Animations.kt)、[MonthCard.kt](app/src/main/java/com/gallery/cleaner/ui/screen/gallery/MonthCard.kt)
+  - 负责人：开发团队
+
+- **补充缺失导入**
+  - 修复 MediaSwipeScreen 缺少 padding 导入。
+  - 修复 ProcessedGalleryScreen 和 RandomCleanupScreen 缺少 zIndex 导入。
+  - 修复 GalleryScreen 和 ProcessedGalleryScreen 缺少 defaultMinSize 导入。
+  - 相关文件：[MediaSwipeScreen.kt](app/src/main/java/com/gallery/cleaner/ui/screen/media/MediaSwipeScreen.kt)、[ProcessedGalleryScreen.kt](app/src/main/java/com/gallery/cleaner/ui/screen/processed/ProcessedGalleryScreen.kt)、[RandomCleanupScreen.kt](app/src/main/java/com/gallery/cleaner/ui/screen/random/RandomCleanupScreen.kt)、[GalleryScreen.kt](app/src/main/java/com/gallery/cleaner/ui/screen/gallery/GalleryScreen.kt)
+  - 负责人：开发团队
+
+### 构建与工具 (Build & Tools)
+
+- **build.bat 自动复制 APK 到工作区根目录**
+  - 编译成功后自动将 APK 从项目根目录复制到工作区根目录（上级目录）。
+  - 文件名格式：`GalleryCleaner-{version}-{type}-{date}.apk`（如 `GalleryCleaner-1.5.0-debug-20260612.apk`）。
+  - 相关文件：[build.bat](build.bat)
+  - 负责人：开发团队
+
+---
+
 ## [1.4.10] - 2026-06-05
 
 ### 改进 (Changed)
@@ -416,6 +492,8 @@
 
 | 版本 | 日期 | 核心变更 |
 |------|------|----------|
+| 1.5.0 | 2026-06-12 | UI/UX 全面优化；动画系统增强；导航过渡优化；并发安全修复；手势冲突修复；死代码清理 |
+| 1.4.10 | 2026-06-05 | Snackbar 回调优化；页面转场动画改为水平滑动；移除 UNDO/REDO 按钮 |
 | 1.3.0 | 2026-06-04 | 已整理相册为空修复；已删除照片过滤；保留按钮；视频指示器样式统一；Live Photo 日志增强；APK 自动复制 |
 | 1.2.0 | 2026-06-02 | 左滑保留不立即持久化；修复随机整理误标记已整理；Live Photo URI 流检测；移除保留按钮；build.bat 改进 |
 | 1.1.0 | 2026-05-15 | 修复 vivo Android 15 媒体读取、权限回调、无限加载；优化查询与日志；升级 AGP 8.5.2；新增 build.bat |

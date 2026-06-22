@@ -196,6 +196,8 @@ fun MotionPhotoPlayer(
                     PlayerView(ctx).apply {
                         player = exoPlayer
                         useController = false
+                        controllerAutoShow = false
+                        controllerShowTimeoutMs = 0
                         resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIT
                         layoutParams = FrameLayout.LayoutParams(
                             ViewGroup.LayoutParams.MATCH_PARENT,

@@ -2,7 +2,6 @@ package com.gallery.cleaner.ui.screen.media
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -49,10 +48,9 @@ import com.gallery.cleaner.domain.model.DeleteQueue
 import com.gallery.cleaner.ui.component.AppPadding
 import com.gallery.cleaner.ui.component.AppShape
 import com.gallery.cleaner.ui.component.GlassCard
+import com.gallery.cleaner.ui.component.GlassDialog
 import com.gallery.cleaner.ui.component.GlassTopBar
 import com.gallery.cleaner.ui.theme.AppColors
-
-private const val TAG = "MediaSwipeScreen"
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -89,7 +87,9 @@ fun MediaSwipeScreen(
         val message = uiState.deleteMessage
         if (message.isNotEmpty()) {
             val result = snackbarHostState.showSnackbar(message)
-            if (result == androidx.compose.material3.SnackbarResult.Dismissed || result == androidx.compose.material3.SnackbarResult.ActionPerformed) {
+            if (result == androidx.compose.material3.SnackbarResult.Dismissed ||
+                result == androidx.compose.material3.SnackbarResult.ActionPerformed
+            ) {
                 viewModel.dismissResultMessage()
             }
         }
@@ -123,17 +123,27 @@ fun MediaSwipeScreen(
                     color = AppColors.Primary
                 )
             }
+
             uiState.error != null -> {
                 Column(
                     modifier = Modifier.fillMaxSize().padding(32.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
-                    Text("加载失败", style = MaterialTheme.typography.titleMedium, color = AppColors.Destructive)
+                    Text(
+                        "加载失败",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = AppColors.Destructive
+                    )
                     Spacer(modifier = Modifier.height(8.dp))
-                    Text(uiState.error ?: "", style = MaterialTheme.typography.bodyMedium, color = AppColors.TextSecondary)
+                    Text(
+                        uiState.error ?: "",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = AppColors.TextSecondary
+                    )
                 }
             }
+
             uiState.items.isEmpty() -> {
                 GlassCard(
                     modifier = Modifier.fillMaxSize().padding(32.dp),
@@ -160,27 +170,14 @@ fun MediaSwipeScreen(
                             style = MaterialTheme.typography.bodyMedium,
                             color = AppColors.TextSecondary
                         )
-                        Row(horizontalArrangement = Arrangement.spacedBy(AppPadding.SM)) {
-                            SwipeStatusChip(
-                                label = "BROWSE",
-                                tint = AppColors.Primary
-                            )
-                            if (uiState.deleteQueue.items.isNotEmpty()) {
-                                SwipeStatusChip(
-                                    label = "QUEUED ${uiState.deleteQueue.items.size}",
-                                    tint = AppColors.Accent
-                                )
-                            }
-                        }
                     }
                 }
             }
+
             else -> {
                 val browseProgress = if (uiState.items.isNotEmpty()) {
                     (uiState.currentIndex + 1).toFloat() / uiState.items.size.toFloat()
-                } else {
-                    0f
-                }
+                } else 0f
 
                 Column(modifier = Modifier.fillMaxSize()) {
                     Spacer(modifier = Modifier.height(topBarHeightDp))
@@ -210,6 +207,7 @@ fun MediaSwipeScreen(
                                 mediaItem = item,
                                 onSwipeUp = {
                                     if (viewModel.isItemKept(item)) {
+                                        isSwipingKeptPhoto = true
                                         viewModel.unkeepCurrent(item)
                                     }
                                     viewModel.queueForDelete(item)
@@ -255,7 +253,11 @@ fun MediaSwipeScreen(
                 },
                 navigationIcon = {
                     IconButton(onClick = { viewModel.onBackPressed(); onBackClick() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "返回", tint = AppColors.TextPrimary)
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "返回",
+                            tint = AppColors.TextPrimary
+                        )
                     }
                 },
                 actions = {},
@@ -271,7 +273,10 @@ fun MediaSwipeScreen(
 
         SnackbarHost(
             hostState = snackbarHostState,
-            modifier = Modifier.align(Alignment.BottomCenter).zIndex(3f)
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 200.dp)
+                .zIndex(3f)
         )
 
         if (uiState.showDeleteDialog) {
@@ -280,7 +285,7 @@ fun MediaSwipeScreen(
             } else {
                 "确定要永久删除 ${uiState.deleteQueue.items.size} 个项目吗？当前系统版本不支持回收站功能，删除后无法恢复。"
             }
-            com.gallery.cleaner.ui.component.GlassDialog(
+            GlassDialog(
                 onDismissRequest = { viewModel.dismissDeleteDialog() },
                 title = "确认删除",
                 text = deleteMessage,
@@ -333,28 +338,6 @@ private fun SwipeStatusStrip(
                     color = AppColors.TextSecondary
                 )
             }
-
-
         }
-    }
-}
-
-@Composable
-private fun SwipeStatusChip(
-    label: String,
-    tint: Color
-) {
-    Box(
-        modifier = Modifier
-            .border(1.dp, tint.copy(alpha = 0.35f), AppShape.Pill)
-            .background(tint.copy(alpha = 0.12f), AppShape.Pill)
-            .padding(horizontal = AppPadding.SM, vertical = AppPadding.XS)
-    ) {
-        Text(
-            text = label,
-            style = MaterialTheme.typography.labelSmall,
-            color = tint,
-            fontWeight = FontWeight.SemiBold
-        )
     }
 }

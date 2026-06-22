@@ -21,7 +21,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -117,11 +117,17 @@ fun TrashScreen(
     Box(modifier = Modifier.fillMaxSize()) {
         when {
             uiState.isLoading -> {
-                CircularProgressIndicator(
-                    modifier = Modifier.align(Alignment.Center),
-                    color = AppColors.Primary
-                )
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(
+                        color = AppColors.Primary,
+                        strokeWidth = 3.dp
+                    )
+                }
             }
+
             uiState.error != null -> {
                 Box(
                     modifier = Modifier
@@ -149,11 +155,14 @@ fun TrashScreen(
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = AppColors.TextSecondary
                             )
-                            Button(onClick = { viewModel.loadTrashItems() }) { Text("重试") }
+                            Button(onClick = { viewModel.loadTrashItems() }) {
+                                Text("重试")
+                            }
                         }
                     }
                 }
             }
+
             uiState.trashItems.isEmpty() -> {
                 Box(
                     modifier = Modifier
@@ -167,6 +176,7 @@ fun TrashScreen(
                         contentPadding = AppPadding.XXL
                     ) {
                         Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.spacedBy(AppPadding.MD)
                         ) {
                             Text(
@@ -184,7 +194,7 @@ fun TrashScreen(
                             Text(
                                 "删除的照片会先进入这里，方便集中恢复或二次清理。",
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = AppColors.TextTertiary
+                                color = AppColors.TextSecondary
                             )
                             Row(horizontalArrangement = Arrangement.spacedBy(AppPadding.SM)) {
                                 StatusChip(label = "SAFE ARCHIVE", tint = AppColors.Primary)
@@ -194,6 +204,7 @@ fun TrashScreen(
                     }
                 }
             }
+
             else -> {
                 val gridState = rememberLazyGridState()
 
@@ -207,8 +218,12 @@ fun TrashScreen(
                         selectedCount = uiState.selectedItems.size,
                         totalCount = uiState.trashItems.size,
                         modifier = Modifier.padding(
-                            start = Responsive.gridContentPadding.calculateLeftPadding(androidx.compose.ui.unit.LayoutDirection.Ltr),
-                            end = Responsive.gridContentPadding.calculateRightPadding(androidx.compose.ui.unit.LayoutDirection.Ltr),
+                            start = Responsive.gridContentPadding.calculateLeftPadding(
+                                androidx.compose.ui.unit.LayoutDirection.Ltr
+                            ),
+                            end = Responsive.gridContentPadding.calculateRightPadding(
+                                androidx.compose.ui.unit.LayoutDirection.Ltr
+                            ),
                             top = Responsive.gridContentPadding.calculateTopPadding(),
                             bottom = AppPadding.SM
                         )
@@ -228,8 +243,12 @@ fun TrashScreen(
                             },
                         state = gridState,
                         contentPadding = PaddingValues(
-                            start = Responsive.gridContentPadding.calculateLeftPadding(androidx.compose.ui.unit.LayoutDirection.Ltr),
-                            end = Responsive.gridContentPadding.calculateRightPadding(androidx.compose.ui.unit.LayoutDirection.Ltr),
+                            start = Responsive.gridContentPadding.calculateLeftPadding(
+                                androidx.compose.ui.unit.LayoutDirection.Ltr
+                            ),
+                            end = Responsive.gridContentPadding.calculateRightPadding(
+                                androidx.compose.ui.unit.LayoutDirection.Ltr
+                            ),
                             bottom = Responsive.gridContentPadding.calculateBottomPadding() +
                                     if (uiState.isSelectMode && uiState.selectedItems.isNotEmpty()) 72.dp else 0.dp
                         ),
@@ -241,10 +260,15 @@ fun TrashScreen(
                                 item = item,
                                 isSelectMode = uiState.isSelectMode,
                                 isSelected = item.id in uiState.selectedItems,
-                                onLongClick = { if (!uiState.isSelectMode) viewModel.enterSelectMode(item.id) },
+                                onLongClick = {
+                                    if (!uiState.isSelectMode) viewModel.enterSelectMode(item.id)
+                                },
                                 onClick = {
                                     if (uiState.isSelectMode) viewModel.toggleSelection(item.id)
-                                    else { selectedItem = item; showRestoreDialog = true }
+                                    else {
+                                        selectedItem = item
+                                        showRestoreDialog = true
+                                    }
                                 }
                             )
                         }
@@ -303,7 +327,11 @@ fun TrashScreen(
             title = "恢复照片",
             text = "确定要恢复这张照片到相册吗？",
             confirmText = "恢复",
-            onConfirm = { viewModel.restoreFromTrash(selectedItem!!); showRestoreDialog = false; selectedItem = null },
+            onConfirm = {
+                viewModel.restoreFromTrash(selectedItem!!)
+                showRestoreDialog = false
+                selectedItem = null
+            },
             onDismiss = { showRestoreDialog = false }
         )
     }
@@ -314,7 +342,10 @@ fun TrashScreen(
             text = "确定要永久删除回收站中的 ${uiState.trashItems.size} 个项目吗？此操作不可撤销。",
             confirmText = "永久删除",
             isDestructive = true,
-            onConfirm = { viewModel.deleteForever(); showDeleteForeverDialog = false },
+            onConfirm = {
+                viewModel.deleteForever()
+                showDeleteForeverDialog = false
+            },
             onDismiss = { showDeleteForeverDialog = false }
         )
     }
@@ -325,7 +356,10 @@ fun TrashScreen(
             text = "确定要永久删除选中的 ${uiState.selectedItems.size} 个项目吗？此操作不可撤销。",
             confirmText = "永久删除",
             isDestructive = true,
-            onConfirm = { viewModel.deleteSelected(); showDeleteSelectedDialog = false },
+            onConfirm = {
+                viewModel.deleteSelected()
+                showDeleteSelectedDialog = false
+            },
             onDismiss = { showDeleteSelectedDialog = false }
         )
     }
@@ -335,7 +369,10 @@ fun TrashScreen(
             title = "恢复项目",
             text = "确定要恢复选中的 ${uiState.selectedItems.size} 个项目到相册吗？",
             confirmText = "恢复",
-            onConfirm = { viewModel.restoreSelected(); showRestoreSelectedDialog = false },
+            onConfirm = {
+                                viewModel.restoreSelected()
+                showRestoreSelectedDialog = false
+            },
             onDismiss = { showRestoreSelectedDialog = false }
         )
     }
@@ -351,19 +388,36 @@ private fun NormalTopBar(
     TopAppBar(
         title = {
             Column {
-                    Text("回收站", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Black, color = AppColors.TextPrimary)
-                    Text("RECYCLE BIN · $itemCount 项", style = MaterialTheme.typography.labelMedium, color = AppColors.TextSecondary)
+                Text(
+                    "回收站",
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = AppColors.TextPrimary
+                )
+                Text(
+                    "RECYCLE BIN · $itemCount 项",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = AppColors.TextSecondary
+                )
             }
         },
         navigationIcon = {
             IconButton(onClick = onBackClick) {
-                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "返回", tint = AppColors.TextPrimary)
+                Icon(
+                    Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = "返回",
+                    tint = AppColors.TextPrimary
+                )
             }
         },
         actions = {
             if (itemCount > 0) {
                 IconButton(onClick = onClearAll) {
-                    Icon(Icons.Default.Delete, contentDescription = "清空回收站", tint = AppColors.Destructive)
+                    Icon(
+                        Icons.Default.Delete,
+                        contentDescription = "清空回收站",
+                        tint = AppColors.Destructive
+                    )
                 }
             }
         },
@@ -389,23 +443,44 @@ private fun SelectModeTopBar(
     TopAppBar(
         title = {
             Column {
-                    Text("批量选择", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Black, color = AppColors.TextPrimary)
-                    Text("SELECT MODE · $selectedCount / $totalCount", style = MaterialTheme.typography.labelMedium, color = AppColors.TextSecondary)
+                Text(
+                    "批量选择",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = AppColors.TextPrimary
+                )
+                Text(
+                    "SELECT MODE · $selectedCount / $totalCount",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = AppColors.TextSecondary
+                )
             }
         },
         navigationIcon = {
             IconButton(onClick = onClose) {
-                Icon(Icons.Default.Close, contentDescription = "取消选择", tint = AppColors.TextPrimary)
+                Icon(
+                    Icons.Default.Close,
+                    contentDescription = "取消选择",
+                    tint = AppColors.TextPrimary
+                )
             }
         },
         actions = {
             if (selectedCount < totalCount) {
                 IconButton(onClick = onSelectAll) {
-                    Icon(Icons.Default.CheckCircle, contentDescription = "全选", tint = AppColors.Primary)
+                    Icon(
+                        Icons.Default.CheckCircle,
+                        contentDescription = "全选",
+                        tint = AppColors.Primary
+                    )
                 }
             } else {
                 IconButton(onClick = onDeselectAll) {
-                    Icon(Icons.Default.Close, contentDescription = "取消全选", tint = AppColors.TextSecondary)
+                    Icon(
+                        Icons.Default.Close,
+                        contentDescription = "取消全选",
+                        tint = AppColors.TextSecondary
+                    )
                 }
             }
         },
@@ -434,7 +509,7 @@ private fun BatchActionBar(
             modifier = Modifier.weight(1f),
             colors = ButtonDefaults.buttonColors(containerColor = AppColors.Accent),
             shape = AppShape.Medium,
-            contentPadding = androidx.compose.foundation.layout.PaddingValues(vertical = 12.dp)
+            contentPadding = PaddingValues(vertical = 12.dp)
         ) {
             Icon(Icons.Default.Refresh, contentDescription = null, modifier = Modifier.size(18.dp))
             Spacer(modifier = Modifier.size(6.dp))
@@ -445,7 +520,7 @@ private fun BatchActionBar(
             modifier = Modifier.weight(1f),
             colors = ButtonDefaults.buttonColors(containerColor = AppColors.Destructive),
             shape = AppShape.Medium,
-            contentPadding = androidx.compose.foundation.layout.PaddingValues(vertical = 12.dp)
+            contentPadding = PaddingValues(vertical = 12.dp)
         ) {
             Icon(Icons.Default.Delete, contentDescription = null, modifier = Modifier.size(18.dp))
             Spacer(modifier = Modifier.size(6.dp))
@@ -526,10 +601,7 @@ private fun TrashSummaryCard(
 }
 
 @Composable
-private fun StatusChip(
-    label: String,
-    tint: Color
-) {
+private fun StatusChip(label: String, tint: Color) {
     Box(
         modifier = Modifier
             .clip(AppShape.Pill)
@@ -590,7 +662,13 @@ private fun TrashItemCard(
     LaunchedEffect(isSelected) {
         if (isSelected) {
             scale.animateTo(0.95f, spring(stiffness = Spring.StiffnessHigh))
-            scale.animateTo(1f, spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessMedium))
+            scale.animateTo(
+                1f,
+                spring(
+                    dampingRatio = Spring.DampingRatioMediumBouncy,
+                    stiffness = Spring.StiffnessMedium
+                )
+            )
         }
     }
 
@@ -615,7 +693,10 @@ private fun TrashItemCard(
             }
     ) {
         AsyncImage(
-            model = ImageRequest.Builder(context).data(item.uri).crossfade(true).build(),
+            model = ImageRequest.Builder(context)
+                .data(item.uri)
+                .crossfade(true)
+                .build(),
             contentDescription = item.name,
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize()

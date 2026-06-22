@@ -1,13 +1,9 @@
 package com.gallery.cleaner.ui.screen.media
 
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -39,7 +35,6 @@ import com.gallery.cleaner.domain.model.DeleteQueue
 import com.gallery.cleaner.ui.component.AppPadding
 import com.gallery.cleaner.ui.component.AppShape
 import com.gallery.cleaner.ui.component.GlassBottomBar
-import com.gallery.cleaner.ui.component.pressClick
 import com.gallery.cleaner.ui.theme.AppColors
 
 @Composable
@@ -107,7 +102,7 @@ fun DeleteQueueBar(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
-                    Column {
+                        Column {
                             Text(
                                 text = "${deleteQueue.items.size}",
                                 style = MaterialTheme.typography.labelLarge,
@@ -143,7 +138,7 @@ fun DeleteQueueBar(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth(animatedProgress)
-                            .height(5.dp)
+                        .height(5.dp)
                         .clip(AppShape.Pill)
                         .background(progressColor)
                 )

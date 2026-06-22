@@ -10,10 +10,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -29,16 +29,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.BlurEffect
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RenderEffect
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.gallery.cleaner.ui.theme.AppColors
 import com.gallery.cleaner.ui.theme.GlassColors
 import kotlinx.coroutines.launch
@@ -62,23 +60,7 @@ object AppPadding {
 }
 
 @Composable
-fun Modifier.glassBlur(blurRadius: Float = 25f): Modifier {
-    val density = androidx.compose.ui.platform.LocalDensity.current
-    val radiusPx = with(density) { blurRadius.dp.toPx() }
-    val blurEffect = remember(radiusPx) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) BlurEffect(radiusPx, radiusPx) else null
-    }
-    return if (blurEffect != null) {
-        this.graphicsLayer { renderEffect = blurEffect }
-    } else {
-        this
-    }
-}
-
-@Composable
-fun Modifier.pressClick(
-    onClick: () -> Unit
-): Modifier {
+fun Modifier.pressClick(onClick: () -> Unit): Modifier {
     val scale = remember { Animatable(1f) }
     val scope = rememberCoroutineScope()
     return this
@@ -92,7 +74,13 @@ fun Modifier.pressClick(
             onClick = {
                 scope.launch {
                     scale.animateTo(0.96f, spring(stiffness = Spring.StiffnessHigh))
-                    scale.animateTo(1f, spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessMedium))
+                    scale.animateTo(
+                        1f,
+                        spring(
+                            dampingRatio = Spring.DampingRatioMediumBouncy,
+                            stiffness = Spring.StiffnessMedium
+                        )
+                    )
                 }
                 onClick()
             }
@@ -280,7 +268,7 @@ fun GlassSwipeHint(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
-                androidx.compose.foundation.layout.Row(
+                Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(AppPadding.SM),
                     verticalAlignment = Alignment.CenterVertically

@@ -1,5 +1,6 @@
 package com.gallery.cleaner.ui.screen.media
 
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
@@ -12,26 +13,25 @@ import androidx.compose.foundation.gestures.calculatePan
 import androidx.compose.foundation.gestures.calculateZoom
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
@@ -47,10 +47,14 @@ import com.gallery.cleaner.ui.component.AppShape
 import com.gallery.cleaner.ui.component.GlassSwipeHint
 import com.gallery.cleaner.ui.component.VideoIndicator
 import com.gallery.cleaner.ui.theme.AppColors
-import kotlin.math.absoluteValue
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 
-private const val SWIPE_THRESHOLD = 120f
-private const val SWIPE_MAX_OFFSET = 300f
+private const val SWIPE_THRESHOLD = 100f
+private const val SWIPE_MAX_OFFSET = 180f
+private const val HINT_MIN_OFFSET = 30f
+private const val MIN_ZOOM = 1f
+private const val MAX_ZOOM = 5f
 
 @Composable
 fun SwipeableMediaCard(
@@ -61,48 +65,43 @@ fun SwipeableMediaCard(
     isKept: Boolean = false,
     modifier: Modifier = Modifier
 ) {
-    var offsetY by remember(mediaItem.id, swipeResetKey) { mutableFloatStateOf(0f) }
-    var overlayAlpha by remember(mediaItem.id, swipeResetKey) { mutableFloatStateOf(0f) }
+    val offsetY = remember(mediaItem.id, swipeResetKey) { Animatable(0f) }
+    val overlayAlpha = remember(mediaItem.id, swipeResetKey) { Animatable(0f) }
     var targetScale by remember(mediaItem.id, swipeResetKey) { mutableFloatStateOf(1f) }
     var photoScale by remember(mediaItem.id, swipeResetKey) { mutableFloatStateOf(1f) }
     var photoOffsetX by remember(mediaItem.id, swipeResetKey) { mutableFloatStateOf(0f) }
     var photoOffsetY by remember(mediaItem.id, swipeResetKey) { mutableFloatStateOf(0f) }
+    val scope = rememberCoroutineScope()
+
     val scale by animateFloatAsState(
         targetValue = targetScale,
         animationSpec = spring(stiffness = Spring.StiffnessMedium),
         label = "swipe_card_scale"
     )
+
     val isZoomablePhoto = !mediaItem.isVideo && !mediaItem.isLivePhoto
     val isPhotoZoomed = isZoomablePhoto && photoScale > 1.01f
 
     LaunchedEffect(mediaItem.id, swipeResetKey) {
-        offsetY = 0f
-        overlayAlpha = 0f
+        offsetY.snapTo(0f)
+        overlayAlpha.snapTo(0f)
         targetScale = 1f
         photoScale = 1f
         photoOffsetX = 0f
         photoOffsetY = 0f
     }
 
-    fun resetSwipeState() {
-        offsetY = 0f
-        overlayAlpha = 0f
-        targetScale = 1f
-    }
+    val hintProgress = if (offsetY.value < -HINT_MIN_OFFSET) {
+        val adjustedAlpha = ((-offsetY.value - HINT_MIN_OFFSET) / (SWIPE_MAX_OFFSET - HINT_MIN_OFFSET)).coerceIn(0f, 1f)
+        (0.22f + adjustedAlpha * 0.78f).coerceIn(0.22f, 1f)
+    } else 0f
 
-    val hintProgress = if (offsetY < 0f) {
-        (0.22f + overlayAlpha * 0.78f).coerceIn(0.22f, 1f)
-    } else {
-        0f
-    }
-
-    Box(modifier = modifier.fillMaxSize()) {
+    Box(modifier = modifier.fillMaxSize().clipToBounds()) {
         GlassSwipeHint(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(horizontal = AppPadding.XXL, vertical = AppPadding.SM)
-                .zIndex(2f)
-                .fillMaxWidth(),
+                .zIndex(2f),
             progress = hintProgress
         )
 
@@ -111,7 +110,7 @@ fun SwipeableMediaCard(
                 .fillMaxSize()
                 .padding(10.dp)
                 .graphicsLayer {
-                    translationY = offsetY
+                    translationY = offsetY.value
                     scaleX = scale
                     scaleY = scale
                 }
@@ -123,26 +122,66 @@ fun SwipeableMediaCard(
                             },
                             onVerticalDrag = { change, dragAmount ->
                                 change.consume()
-                                val rawOffset = offsetY + dragAmount
-                                val newOffset = rawOffset.coerceIn(-SWIPE_MAX_OFFSET, 50f)
-                                val progress = if (newOffset < 0f) {
-                                    (-newOffset / SWIPE_MAX_OFFSET).coerceIn(0f, 1f)
-                                } else {
-                                    0f
+                                scope.launch {
+                                    val rawOffset = offsetY.value + dragAmount
+                                    val newOffset = rawOffset.coerceIn(-SWIPE_MAX_OFFSET, 50f)
+                                    val progress = if (newOffset < 0f) {
+                                        (-newOffset / SWIPE_MAX_OFFSET).coerceIn(0f, 1f)
+                                    } else 0f
+                                    offsetY.snapTo(newOffset)
+                                    overlayAlpha.snapTo(progress)
                                 }
-                                offsetY = newOffset
-                                overlayAlpha = progress
                             },
                             onDragEnd = {
-                                if (offsetY < -SWIPE_THRESHOLD) {
+                                if (offsetY.value < -SWIPE_THRESHOLD) {
                                     targetScale = 0.9f
                                     onSwipeUp()
                                 } else {
-                                    resetSwipeState()
+                                    scope.launch {
+                                        launch {
+                                            offsetY.animateTo(
+                                                0f,
+                                                spring(
+                                                    dampingRatio = Spring.DampingRatioMediumBouncy,
+                                                    stiffness = Spring.StiffnessMedium
+                                                )
+                                            )
+                                        }
+                                        launch {
+                                            overlayAlpha.animateTo(
+                                                0f,
+                                                spring(
+                                                    dampingRatio = Spring.DampingRatioMediumBouncy,
+                                                    stiffness = Spring.StiffnessMedium
+                                                )
+                                            )
+                                        }
+                                    }
+                                    targetScale = 1f
                                 }
                             },
                             onDragCancel = {
-                                resetSwipeState()
+                                scope.launch {
+                                    launch {
+                                        offsetY.animateTo(
+                                            0f,
+                                            spring(
+                                                dampingRatio = Spring.DampingRatioMediumBouncy,
+                                                stiffness = Spring.StiffnessMedium
+                                            )
+                                        )
+                                    }
+                                    launch {
+                                        overlayAlpha.animateTo(
+                                            0f,
+                                            spring(
+                                                dampingRatio = Spring.DampingRatioMediumBouncy,
+                                                stiffness = Spring.StiffnessMedium
+                                            )
+                                        )
+                                    }
+                                }
+                                targetScale = 1f
                             }
                         )
                     }
@@ -165,7 +204,10 @@ fun SwipeableMediaCard(
                     .border(1.dp, AppColors.Separator, AppShape.XLarge)
             ) {
                 AsyncImage(
-                    model = ImageRequest.Builder(context).data(mediaItem.uri).crossfade(false).build(),
+                    model = ImageRequest.Builder(context)
+                        .data(mediaItem.uri)
+                        .crossfade(false)
+                        .build(),
                     contentDescription = mediaItem.name,
                     contentScale = if (mediaItem.isVideo) ContentScale.Crop else ContentScale.Fit,
                     modifier = if (isZoomablePhoto) {
@@ -186,9 +228,13 @@ fun SwipeableMediaCard(
 
                                         if (pressedPointers >= 2) {
                                             zooming = true
-                                            val newScale = (photoScale * event.calculateZoom()).coerceIn(1f, 5f)
+                                            val newScale =
+                                                (photoScale * event.calculateZoom()).coerceIn(
+                                                    MIN_ZOOM,
+                                                    MAX_ZOOM
+                                                )
                                             photoScale = newScale
-                                            if (newScale <= 1f) {
+                                            if (newScale <= MIN_ZOOM) {
                                                 photoOffsetX = 0f
                                                 photoOffsetY = 0f
                                             } else {
@@ -211,7 +257,9 @@ fun SwipeableMediaCard(
                 )
                 if (mediaItem.isVideo) {
                     VideoIndicator(
-                        modifier = Modifier.align(Alignment.Center).padding(16.dp)
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .padding(16.dp)
                     )
                 }
             }

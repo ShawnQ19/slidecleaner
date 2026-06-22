@@ -135,11 +135,23 @@ for %%f in (!APK_FILE!) do (
 echo ==============================================
 echo.
 
-:: 复制 APK 到项目根目录
+:: 获取版本号
+for /f "tokens=2 delims==" %%a in ('findstr /r "versionName" app\build.gradle.kts') do (
+    set "VERSION_RAW=%%a"
+)
+set "VERSION=!VERSION_RAW: =!"
+set "VERSION=!VERSION:"=!"
+set "VERSION=!VERSION:~0,-1!"
+
+:: 生成时间戳
 for /f "tokens=2 delims==" %%a in ('wmic os get localdatetime /value 2^>nul') do set "dt=%%a"
 set "BUILD_DATE=!dt:~0,8!"
-set "ROOT_APK_NAME=GalleryCleaner-%BUILD_TYPE%-!BUILD_DATE!.apk"
+
+:: 项目根目录 APK
+set "ROOT_APK_NAME=GalleryCleaner-%VERSION%-%BUILD_TYPE%-%BUILD_DATE%.apk"
 set "ROOT_APK=%CD%\!ROOT_APK_NAME!"
+
+:: 复制 APK 到项目根目录
 echo [INFO] 复制 APK 到项目根目录...
 copy /Y "!APK_FILE!" "!ROOT_APK!" >nul 2>&1
 if errorlevel 1 (
@@ -148,6 +160,18 @@ if errorlevel 1 (
 ) else (
     echo [SUCCESS] !ROOT_APK!
     set "FINAL_APK=!ROOT_APK!"
+)
+echo.
+
+:: 复制 APK 到工作区根目录
+set "WORKSPACE_ROOT=%CD%\..\"
+set "WORKSPACE_APK=%WORKSPACE_ROOT%!ROOT_APK_NAME!"
+echo [INFO] 复制 APK 到工作区根目录...
+copy /Y "!APK_FILE!" "!WORKSPACE_APK!" >nul 2>&1
+if errorlevel 1 (
+    echo [WARN] 复制到工作区失败
+) else (
+    echo [SUCCESS] !WORKSPACE_APK!
 )
 echo.
 
@@ -173,7 +197,7 @@ if "%INSTALL_APK%"=="1" (
 echo.
 echo [INFO] 正在同步到本地 Git 仓库...
 git add -A
-git commit -m ""Auto sync: build success"" --allow-empty
+git commit -m "Auto sync: build %BUILD_TYPE% v%VERSION%" --allow-empty
 if errorlevel 1 (
     echo [WARN] Git commit 失败，跳过推送
 ) else (
@@ -181,7 +205,7 @@ if errorlevel 1 (
     if errorlevel 1 (
         echo [WARN] Git push 失败
     ) else (
-        echo [SUCCESS] 已推送到 E:\git\slidecleaner.git
+        echo [SUCCESS] 已推送到远程仓库
     )
 )
 echo.
@@ -208,6 +232,10 @@ echo   build.bat                  编译 Debug APK
 echo   build.bat release          编译 Release APK
 echo   build.bat debug --install  编译并安装 Debug APK
 echo   build.bat release --no-clean  增量编译 Release
+echo.
+echo 输出位置:
+echo   项目根目录: GalleryCleaner-{version}-{type}-{date}.apk
+echo   工作区根目录: 同上
 echo.
 pause
 exit /b 0

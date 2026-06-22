@@ -1,24 +1,20 @@
 package com.gallery.cleaner.ui.screen.gallery
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
@@ -26,7 +22,6 @@ import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.Shuffle
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -44,9 +39,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
@@ -61,9 +55,6 @@ import com.gallery.cleaner.ui.component.Motion
 import com.gallery.cleaner.ui.component.Responsive
 import com.gallery.cleaner.ui.permission.PermissionHandler
 import com.gallery.cleaner.ui.theme.AppColors
-import com.gallery.cleaner.util.log.AppLogger
-
-private const val TAG = "GalleryScreen"
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -80,22 +71,35 @@ fun GalleryScreen(
     var topBarHeight by remember { mutableStateOf(0) }
     val topBarHeightDp = with(density) { topBarHeight.toDp() }
 
-    AppLogger.d(TAG, "GalleryScreen 重组，groups=${uiState.groups.size}")
-
     PermissionHandler(
         onPermissionGranted = {
-            AppLogger.d(TAG, "PermissionHandler onPermissionGranted")
             viewModel.onPermissionGranted()
         }
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             when {
                 uiState.isInitialLoading -> {
-                    CircularProgressIndicator(
-                        modifier = Modifier.align(Alignment.Center),
-                        color = AppColors.Primary
-                    )
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(AppPadding.MD)
+                        ) {
+                            androidx.compose.material3.CircularProgressIndicator(
+                                color = AppColors.Primary,
+                                strokeWidth = 3.dp
+                            )
+                            Text(
+                                text = "正在扫描相册...",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = AppColors.TextSecondary
+                            )
+                        }
+                    }
                 }
+
                 uiState.error != null -> {
                     Column(
                         modifier = Modifier
@@ -116,11 +120,12 @@ fun GalleryScreen(
                             color = AppColors.TextSecondary
                         )
                         Spacer(modifier = Modifier.height(16.dp))
-                        androidx.compose.material3.Button(onClick = { viewModel.retry() }) {
+                        Button(onClick = { viewModel.retry() }) {
                             Text("重试")
                         }
                     }
                 }
+
                 !uiState.isLoading && uiState.groups.isEmpty() -> {
                     Column(
                         modifier = Modifier
@@ -135,11 +140,12 @@ fun GalleryScreen(
                             color = AppColors.TextSecondary
                         )
                         Spacer(modifier = Modifier.height(16.dp))
-                        androidx.compose.material3.Button(onClick = { viewModel.retry() }) {
+                        Button(onClick = { viewModel.retry() }) {
                             Text("刷新")
                         }
                     }
                 }
+
                 else -> {
                     val totalCount = uiState.groups.sumOf { it.mediaItems.size }
                     val monthCount = uiState.groups.size
@@ -172,15 +178,13 @@ fun GalleryScreen(
                         itemsIndexed(
                             uiState.groups,
                             key = { _, group -> group.yearMonth.toString() }
-                        ) { index, group ->
+                        ) { _, group ->
                             MonthCard(
                                 group = group,
-                                onClick = { onMonthClick(group.yearMonth.toString()) },
-                                index = index
+                                onClick = { onMonthClick(group.yearMonth.toString()) }
                             )
                         }
                     }
-
                 }
             }
 
@@ -215,20 +219,14 @@ fun GalleryScreen(
                         actionIconContentColor = AppColors.TextSecondary
                     ),
                     actions = {
-                        IconButton(onClick = {
-                            AppLogger.userAction(TAG, "点击主题设置")
-                            onThemeSettingsClick()
-                        }) {
+                        IconButton(onClick = { onThemeSettingsClick() }) {
                             Icon(
                                 imageVector = Icons.Default.Palette,
                                 contentDescription = "主题设置",
                                 tint = AppColors.TextSecondary
                             )
                         }
-                        IconButton(onClick = {
-                            AppLogger.userAction(TAG, "点击回收站入口")
-                            onTrashClick()
-                        }) {
+                        IconButton(onClick = { onTrashClick() }) {
                             Icon(
                                 imageVector = Icons.Default.Delete,
                                 contentDescription = "回收站",
@@ -237,7 +235,7 @@ fun GalleryScreen(
                         }
                         val totalCount = uiState.groups.sumOf { it.mediaItems.size }
                         Text(
-                            text = "$totalCount 个项目",
+                            text = "$totalCount 项",
                             style = MaterialTheme.typography.labelMedium,
                             color = AppColors.TextTertiary,
                             modifier = Modifier.padding(end = 16.dp)
@@ -306,7 +304,7 @@ private fun GalleryHeroPanel(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(8.dp)
+                    .height(6.dp)
                     .clip(AppShape.Pill)
                     .background(AppColors.SurfaceOverlay.copy(alpha = 0.8f))
             ) {
@@ -325,62 +323,65 @@ private fun GalleryHeroPanel(
             ) {
                 StatTile(label = "总项目", value = totalCount.toString())
                 StatTile(label = "月份", value = monthCount.toString())
-                StatTile(label = "月均", value = if (monthCount > 0) averagePerMonth.toString() else "0")
+                StatTile(
+                    label = "月均",
+                    value = if (monthCount > 0) averagePerMonth.toString() else "0"
+                )
             }
 
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(AppPadding.SM)
-                            ) {
-                                Button(
-                                    onClick = onProcessedClick,
-                                    modifier = Modifier.weight(1f),
-                                    shape = AppShape.Medium,
-                                    colors = ButtonDefaults.buttonColors(
-                                        containerColor = AppColors.SurfaceElevated,
-                                        contentColor = AppColors.TextPrimary
-                                    ),
-                                    contentPadding = androidx.compose.foundation.layout.PaddingValues(vertical = 12.dp)
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.CheckCircle,
-                                        contentDescription = null,
-                                        modifier = Modifier.size(18.dp)
-                                    )
-                                    Spacer(modifier = Modifier.size(6.dp))
-                                    Text(
-                                        text = "已整理",
-                                        fontWeight = FontWeight.SemiBold,
-                                        color = AppColors.TextPrimary
-                                    )
-                                }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(AppPadding.SM)
+            ) {
+                Button(
+                    onClick = onProcessedClick,
+                    modifier = Modifier.weight(1f),
+                    shape = AppShape.Medium,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = AppColors.SurfaceElevated,
+                        contentColor = AppColors.TextPrimary
+                    ),
+                    contentPadding = PaddingValues(vertical = 12.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.CheckCircle,
+                        contentDescription = null,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Spacer(modifier = Modifier.size(6.dp))
+                    Text(
+                        text = "已整理",
+                        fontWeight = FontWeight.SemiBold,
+                        color = AppColors.TextPrimary
+                    )
+                }
 
-                                Button(
-                                    onClick = onRandomCleanupClick,
-                                    modifier = Modifier.weight(1f),
-                                    shape = AppShape.Medium,
-                                    colors = ButtonDefaults.buttonColors(containerColor = AppColors.Primary),
-                                    contentPadding = androidx.compose.foundation.layout.PaddingValues(vertical = 12.dp)
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Filled.Shuffle,
-                                        contentDescription = null,
-                                        modifier = Modifier.size(18.dp)
-                                    )
-                                    Spacer(modifier = Modifier.size(6.dp))
-                                    Text(
-                                        text = "随机清理 50 张",
-                                        fontWeight = FontWeight.SemiBold,
-                                        color = AppColors.TextPrimary
-                                    )
-                                }
-                            }
+                Button(
+                    onClick = onRandomCleanupClick,
+                    modifier = Modifier.weight(1f),
+                    shape = AppShape.Medium,
+                    colors = ButtonDefaults.buttonColors(containerColor = AppColors.Primary),
+                    contentPadding = PaddingValues(vertical = 12.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Shuffle,
+                        contentDescription = null,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Spacer(modifier = Modifier.size(6.dp))
+                    Text(
+                        text = "随机清理",
+                        fontWeight = FontWeight.SemiBold,
+                        color = AppColors.TextPrimary
+                    )
+                }
+            }
 
-                            Text(
-                                text = "随机从全局相册抽取 50 张，处理后会进入已整理，并从普通月份相册里自动消失",
-                                style = MaterialTheme.typography.labelMedium,
-                                color = AppColors.TextTertiary
-                            )
+            Text(
+                text = "随机从全局相册抽取，处理后会进入已整理，从普通月份相册自动消失",
+                style = MaterialTheme.typography.labelMedium,
+                color = AppColors.TextTertiary
+            )
         }
     }
 }

@@ -53,7 +53,11 @@ class RandomCleanupViewModel @Inject constructor(
                     it.copy(
                         items = items,
                         currentIndex = 0,
-                        deleteQueue = DeleteQueue(items = emptyList(), currentMonth = null, monthTotalCount = items.size),
+                        deleteQueue = DeleteQueue(
+                            items = emptyList(),
+                            currentMonth = null,
+                            monthTotalCount = items.size
+                        ),
                         processedCount = processedUris.size,
                         isLoading = false,
                         error = null,
@@ -81,13 +85,45 @@ class RandomCleanupViewModel @Inject constructor(
                 "已永久删除 ${result.deletedCount} 项"
             }
         )
+        checkBatchComplete()
     }
 
-    override fun onAfterDeleteSuccess() {
-        loadBatch(preserveResultMessage = true)
+    override fun executeQueueForDelete(item: com.gallery.cleaner.domain.model.MediaItem, removedIndex: Int, oldIndex: Int) {
+        super.executeQueueForDelete(item, removedIndex, oldIndex)
+        val state = _uiState.value
+        if (state.items.isEmpty()) {
+            checkBatchComplete()
+        }
+    }
+
+    override fun keepCurrent(silent: Boolean) {
+        super.keepCurrent(silent)
+        checkBatchComplete()
+    }
+
+    private fun checkBatchComplete() {
+        val state = _uiState.value
+        if (!state.isLoading && state.items.isEmpty() && !state.showDeleteDialog && !state.showBatchCompleteDialog) {
+            _uiState.update { it.copy(showBatchCompleteDialog = true) }
+        }
+    }
+
+    fun dismissBatchCompleteDialog() {
+        _uiState.update { it.copy(showBatchCompleteDialog = false) }
+    }
+
+    fun loadNextBatch() {
+        _uiState.update { it.copy(showBatchCompleteDialog = false) }
+        loadBatch()
+    }
+
+    fun confirmDeleteFromComplete() {
+        _uiState.update { it.copy(showBatchCompleteDialog = false) }
+        confirmDelete()
     }
 
     fun refreshBatch() {
+        _uiState.update { it.copy(showBatchCompleteDialog = false) }
         loadBatch()
     }
 }

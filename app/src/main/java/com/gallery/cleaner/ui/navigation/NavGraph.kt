@@ -1,6 +1,8 @@
 package com.gallery.cleaner.ui.navigation
 
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
@@ -27,44 +29,50 @@ fun NavGraph() {
     val navController = rememberNavController()
 
     navController.addOnDestinationChangedListener { _, destination, arguments ->
-        AppLogger.userAction(TAG, "页面导航", "route=${destination.route}, args=$arguments")
+        AppLogger.userAction(
+            TAG,
+            "页面导航",
+            "route=${destination.route}, args=$arguments"
+        )
     }
 
-    val sharedEnterTransition = slideInHorizontally(
-            initialOffsetX = { it },
-            animationSpec = tween(Motion.Duration.Normal)
-        )
+    val defaultEnterTransition = slideInHorizontally(
+        initialOffsetX = { it },
+        animationSpec = tween(Motion.Duration.Normal)
+    )
 
-    val sharedExitTransition = slideOutHorizontally(
-            targetOffsetX = { -it },
-            animationSpec = tween(Motion.Duration.Normal)
-        )
+    val defaultExitTransition = slideOutHorizontally(
+        targetOffsetX = { -it },
+        animationSpec = tween(Motion.Duration.Normal)
+    )
 
+    val defaultPopEnterTransition = slideInHorizontally(
+        initialOffsetX = { -it },
+        animationSpec = tween(Motion.Duration.Normal)
+    )
 
+    val defaultPopExitTransition = slideOutHorizontally(
+        targetOffsetX = { it },
+        animationSpec = tween(Motion.Duration.Normal)
+    )
 
-    val previewEnterTransition = slideInHorizontally(
-            initialOffsetX = { it },
-            animationSpec = tween(Motion.Duration.Normal)
-        )
+    val previewEnterTransition = fadeIn(tween(Motion.Duration.Normal)) + slideInHorizontally(
+        initialOffsetX = { it / 3 },
+        animationSpec = tween(Motion.Duration.Normal)
+    )
 
     val previewExitTransition = slideOutHorizontally(
-            targetOffsetX = { -it },
-            animationSpec = tween(Motion.Duration.Normal)
-        )
+        targetOffsetX = { it },
+        animationSpec = tween(Motion.Duration.Normal)
+    ) + fadeOut(tween(Motion.Duration.Fast))
 
     NavHost(
         navController = navController,
         startDestination = Routes.GALLERY,
-        enterTransition = { sharedEnterTransition },
-        exitTransition = { sharedExitTransition },
-        popEnterTransition = { slideInHorizontally(
-            initialOffsetX = { -it },
-            animationSpec = tween(Motion.Duration.Normal)
-        ) },
-        popExitTransition = { slideOutHorizontally(
-            targetOffsetX = { it },
-            animationSpec = tween(Motion.Duration.Normal)
-        ) }
+        enterTransition = { defaultEnterTransition },
+        exitTransition = { defaultExitTransition },
+        popEnterTransition = { defaultPopEnterTransition },
+        popExitTransition = { defaultPopExitTransition }
     ) {
         composable(Routes.GALLERY) {
             GalleryScreen(
@@ -92,10 +100,10 @@ fun NavGraph() {
         }
         composable(
             route = Routes.PROCESSED_GALLERY,
-            enterTransition = { sharedEnterTransition },
-            exitTransition = { sharedExitTransition },
-            popEnterTransition = { sharedEnterTransition },
-            popExitTransition = { sharedExitTransition }
+            enterTransition = { defaultEnterTransition },
+            exitTransition = { defaultExitTransition },
+            popEnterTransition = { defaultPopEnterTransition },
+            popExitTransition = { defaultPopExitTransition }
         ) {
             ProcessedGalleryScreen(
                 onBackClick = { navController.popBackStack() },
@@ -108,10 +116,10 @@ fun NavGraph() {
         composable(
             route = Routes.MEDIA_SWIPE,
             arguments = listOf(navArgument("yearMonth") { type = NavType.StringType }),
-            enterTransition = { sharedEnterTransition },
-            exitTransition = { sharedExitTransition },
-            popEnterTransition = { sharedEnterTransition },
-            popExitTransition = { sharedExitTransition }
+            enterTransition = { defaultEnterTransition },
+            exitTransition = { defaultExitTransition },
+            popEnterTransition = { defaultPopEnterTransition },
+            popExitTransition = { defaultPopExitTransition }
         ) { backStackEntry ->
             val yearMonth = backStackEntry.arguments?.getString("yearMonth") ?: ""
             MediaSwipeScreen(
@@ -126,10 +134,10 @@ fun NavGraph() {
         composable(
             route = Routes.PROCESSED_MONTH,
             arguments = listOf(navArgument("yearMonth") { type = NavType.StringType }),
-            enterTransition = { sharedEnterTransition },
-            exitTransition = { sharedExitTransition },
-            popEnterTransition = { sharedEnterTransition },
-            popExitTransition = { sharedExitTransition }
+            enterTransition = { defaultEnterTransition },
+            exitTransition = { defaultExitTransition },
+            popEnterTransition = { defaultPopEnterTransition },
+            popExitTransition = { defaultPopExitTransition }
         ) { backStackEntry ->
             val yearMonth = backStackEntry.arguments?.getString("yearMonth") ?: ""
             ProcessedMonthScreen(
@@ -146,8 +154,8 @@ fun NavGraph() {
             arguments = listOf(navArgument("mediaId") { type = NavType.LongType }),
             enterTransition = { previewEnterTransition },
             exitTransition = { previewExitTransition },
-            popEnterTransition = { sharedEnterTransition },
-            popExitTransition = { sharedExitTransition }
+            popEnterTransition = { defaultPopEnterTransition },
+            popExitTransition = { defaultPopExitTransition }
         ) { backStackEntry ->
             val mediaId = backStackEntry.arguments?.getLong("mediaId") ?: 0L
             PreviewScreen(
@@ -157,10 +165,10 @@ fun NavGraph() {
         }
         composable(
             route = Routes.RANDOM_CLEANUP,
-            enterTransition = { sharedEnterTransition },
-            exitTransition = { sharedExitTransition },
-            popEnterTransition = { sharedEnterTransition },
-            popExitTransition = { sharedExitTransition }
+            enterTransition = { defaultEnterTransition },
+            exitTransition = { defaultExitTransition },
+            popEnterTransition = { defaultPopEnterTransition },
+            popExitTransition = { defaultPopExitTransition }
         ) {
             RandomCleanupScreen(
                 onBackClick = { navController.popBackStack() },
@@ -172,10 +180,10 @@ fun NavGraph() {
         }
         composable(
             route = Routes.TRASH,
-            enterTransition = { sharedEnterTransition },
-            exitTransition = { sharedExitTransition },
-            popEnterTransition = { sharedEnterTransition },
-            popExitTransition = { sharedExitTransition }
+            enterTransition = { defaultEnterTransition },
+            exitTransition = { defaultExitTransition },
+            popEnterTransition = { defaultPopEnterTransition },
+            popExitTransition = { defaultPopExitTransition }
         ) {
             TrashScreen(
                 onBackClick = { navController.popBackStack() }
@@ -183,10 +191,10 @@ fun NavGraph() {
         }
         composable(
             route = Routes.THEME_SETTINGS,
-            enterTransition = { sharedEnterTransition },
-            exitTransition = { sharedExitTransition },
-            popEnterTransition = { sharedEnterTransition },
-            popExitTransition = { sharedExitTransition }
+            enterTransition = { defaultEnterTransition },
+            exitTransition = { defaultExitTransition },
+            popEnterTransition = { defaultPopEnterTransition },
+            popExitTransition = { defaultPopExitTransition }
         ) {
             ThemeSettingsScreen(
                 onBackClick = { navController.popBackStack() }
