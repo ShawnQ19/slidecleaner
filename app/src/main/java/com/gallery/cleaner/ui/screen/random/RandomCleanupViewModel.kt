@@ -92,6 +92,7 @@ class RandomCleanupViewModel @Inject constructor(
         super.executeQueueForDelete(item, removedIndex, oldIndex)
         val state = _uiState.value
         if (state.items.isEmpty()) {
+            _uiState.update { it.copy(showDeleteDialog = false) }
             checkBatchComplete()
         }
     }
