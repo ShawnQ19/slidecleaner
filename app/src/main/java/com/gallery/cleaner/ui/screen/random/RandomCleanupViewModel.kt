@@ -46,6 +46,7 @@ class RandomCleanupViewModel @Inject constructor(
                 _uiState.update {
                     it.copy(
                         items = items,
+                        hiddenItemIds = emptySet(),
                         currentIndex = 0,
                         batchTotal = items.size,
                         deleteQueue = DeleteQueue(

@@ -7,7 +7,6 @@ import com.gallery.cleaner.domain.model.DeleteQueue
 import com.gallery.cleaner.domain.model.MediaItem
 import com.gallery.cleaner.domain.repository.MediaRepository
 import com.gallery.cleaner.domain.repository.TrashResult
-import com.gallery.cleaner.domain.undo.QueueForDeleteCommand
 import com.gallery.cleaner.domain.undo.UndoManager
 import com.gallery.cleaner.domain.usecase.DeleteMediaUseCase
 import com.gallery.cleaner.util.log.AppLogger
@@ -39,7 +38,7 @@ abstract class CleanupViewModel(
         get() = _uiState.value.items
 
     open fun setCurrentIndex(index: Int) {
-        val maxIndex = currentItems.lastIndex
+        val maxIndex = _uiState.value.visibleItems.lastIndex
         val safeIndex = when {
             maxIndex < 0 -> 0
             index < 0 -> 0
@@ -55,66 +54,25 @@ abstract class CleanupViewModel(
             AppLogger.w(TAG, "item.id=${item.id} 已在删除队列中，跳过")
             return
         }
-        val removedIndex = currentItems.indexOfFirst { it.id == item.id }
-        val oldIndex = _uiState.value.currentIndex
-        viewModelScope.launch {
-            val command = QueueForDeleteCommand(
-                item = item,
-                removedIndex = removedIndex,
-                oldIndex = oldIndex,
-                onQueue = { executeQueueForDelete(it, removedIndex, oldIndex) },
-                onRestore = { restoredItem, idx, curIdx -> executeRestoreFromDelete(restoredItem, idx, curIdx) }
-            )
-            undoManager.execute(command)
-        }
-    }
-
-    protected open fun executeQueueForDelete(item: MediaItem, removedIndex: Int, oldIndex: Int) {
         _deleteQueueItems.add(item)
-        val items = currentItems.toMutableList()
-        items.removeAll { it.id == item.id }
-        val newIndex = computeNewIndex(items, removedIndex, oldIndex)
-        _uiState.update { it.copy(items = items, currentIndex = newIndex, showDeleteDialog = false) }
+        keptItems.remove(item)
+        _uiState.update { state ->
+            state.copy(
+                hiddenItemIds = state.hiddenItemIds + item.id,
+                showDeleteDialog = false
+            )
+        }
         updateDeleteQueue()
         if (_deleteQueueItems.size >= DeleteQueue.MAX_QUEUE_SIZE) {
             _uiState.update { it.copy(showDeleteDialog = true) }
         }
     }
 
-    protected open fun executeRestoreFromDelete(item: MediaItem, removedIndex: Int, oldIndex: Int) {
-        _deleteQueueItems.remove(item)
-        updateDeleteQueue()
-        val items = currentItems.toMutableList()
-        val insertIndex = removedIndex.coerceIn(0, items.size)
-        items.add(insertIndex, item)
-        _uiState.update {
-            it.copy(
-                items = items,
-                currentIndex = oldIndex.coerceIn(0, items.lastIndex),
-                showDeleteDialog = false,
-                deleteSuccess = true,
-                deleteMessage = "已撤销加入删除队列"
-            )
-        }
-    }
-
-    private fun computeNewIndex(items: List<MediaItem>, removedIndex: Int, oldIndex: Int): Int {
-        return when {
-            items.isEmpty() -> 0
-            removedIndex < 0 -> oldIndex.coerceAtMost(items.size - 1)
-            removedIndex < oldIndex -> (oldIndex - 1).coerceAtLeast(0)
-            removedIndex == oldIndex -> oldIndex.coerceAtMost(items.lastIndex)
-            else -> oldIndex.coerceAtMost(items.lastIndex)
-        }
-    }
-
-    open fun keepCurrent(silent: Boolean = false) {
+    fun keepCurrent(silent: Boolean = false) {
         val item = _uiState.value.currentItem ?: return
         if (_uiState.value.showDeleteDialog) return
-        viewModelScope.launch {
-            keptItems.add(item)
-            AppLogger.userAction(TAG, "keepCurrent", "item.id=${item.id}, keptCount=${keptItems.size}")
-        }
+        keptItems.add(item)
+        AppLogger.userAction(TAG, "keepCurrent", "item.id=${item.id}, keptCount=${keptItems.size}")
     }
 
     fun unkeepCurrent(item: MediaItem) {
@@ -126,12 +84,18 @@ abstract class CleanupViewModel(
 
     fun undo() {
         if (_uiState.value.showDeleteDialog) return
-        viewModelScope.launch { undoManager.undo() }
-    }
-
-    fun redo() {
-        if (_uiState.value.showDeleteDialog) return
-        viewModelScope.launch { undoManager.redo() }
+        val lastDeleted = _deleteQueueItems.lastOrNull() ?: return
+        _deleteQueueItems.remove(lastDeleted)
+        keptItems.remove(lastDeleted)
+        _uiState.update { state ->
+            state.copy(
+                hiddenItemIds = state.hiddenItemIds - lastDeleted.id,
+                showDeleteDialog = false,
+                deleteSuccess = true,
+                deleteMessage = "已撤销加入删除队列"
+            )
+        }
+        updateDeleteQueue()
     }
 
     open fun showDeleteConfirmDialog() {
@@ -167,6 +131,7 @@ abstract class CleanupViewModel(
         }
         _deleteQueueItems.clear()
         undoManager.clear()
+        _uiState.update { it.copy(hiddenItemIds = emptySet()) }
         updateDeleteQueue()
         finalizeKeptItems()
         _uiState.update {
@@ -244,6 +209,7 @@ abstract class CleanupViewModel(
 
     open fun clearDeleteQueue() {
         _deleteQueueItems.clear()
+        _uiState.update { it.copy(hiddenItemIds = emptySet()) }
         updateDeleteQueue()
     }
 
