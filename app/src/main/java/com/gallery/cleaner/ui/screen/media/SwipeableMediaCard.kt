@@ -1,5 +1,6 @@
 package com.gallery.cleaner.ui.screen.media
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
@@ -43,6 +44,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.gallery.cleaner.domain.model.MediaItem
 import com.gallery.cleaner.ui.component.AppPadding
+import com.gallery.cleaner.ui.component.Motion
 import com.gallery.cleaner.ui.component.AppShape
 import com.gallery.cleaner.ui.component.GlassSwipeHint
 import com.gallery.cleaner.ui.component.VideoIndicator
@@ -287,12 +289,17 @@ fun SwipeableMediaCard(
             )
         }
 
-        if (isKept) {
+        AnimatedVisibility(
+            visible = isKept,
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(end = 16.dp, top = 16.dp)
+                .zIndex(1f),
+            enter = Motion.Enter.scaleIn(0.3f) + Motion.Enter.fadeIn(150),
+            exit = Motion.Exit.scaleOut(0.3f) + Motion.Exit.fadeOut()
+        ) {
             Box(
                 modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(end = 16.dp, top = 16.dp)
-                    .zIndex(1f)
                     .clip(AppShape.Pill)
                     .background(AppColors.Success)
                     .padding(horizontal = AppPadding.XS, vertical = 4.dp)

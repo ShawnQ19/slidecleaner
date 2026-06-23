@@ -178,7 +178,7 @@ fun GalleryScreen(
                         itemsIndexed(
                             uiState.groups,
                             key = { _, group -> group.yearMonth.toString() }
-                        ) { _, group ->
+                        ) { index, group ->
                             MonthCard(
                                 group = group,
                                 onClick = { onMonthClick(group.yearMonth.toString()) }

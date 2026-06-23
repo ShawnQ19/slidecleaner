@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -337,6 +338,33 @@ fun GlassSwipeHint(
                     )
                 }
             }
+        }
+    }
+}
+
+
+@Composable
+fun GlassLoadingIndicator(
+    modifier: Modifier = Modifier,
+    message: String = "加载中..."
+) {
+    Box(
+        modifier = modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(AppPadding.MD)
+        ) {
+            androidx.compose.material3.CircularProgressIndicator(
+                color = AppColors.Primary,
+                strokeWidth = 3.dp
+            )
+            Text(
+                text = message,
+                style = MaterialTheme.typography.bodyMedium,
+                color = AppColors.TextSecondary
+            )
         }
     }
 }
