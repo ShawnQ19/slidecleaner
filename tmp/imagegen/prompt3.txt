@@ -1,0 +1,28 @@
+Use case: ui-mockup
+Asset type: mobile app screenshot, Android phone, 390x844 pixels portrait
+Style/medium: realistic shippable UI mockup with dark glassmorphism style
+
+Background: deep navy (#07111E) with subtle gradient to dark blue-black. Top status bar showing time 12:36, signal, wifi, battery icons in white.
+
+Top app bar: Title "相册清理" in white bold 22sp, subtitle "12 个月份" in muted gray (#6B7280) 12sp. Right side of app bar: a small palette icon and a small delete/trash icon in muted gray, both icon buttons.
+
+Below: A hero glass card with 32dp rounded corners, frosted translucent background (rgba 255,255,255,0.06), subtle border glow, backdrop blur effect. Full width with horizontal margins.
+
+Inside the hero card, top to bottom:
+1. Small row: "SCENE 01 · DEEP BLUE" in muted blue (#5B9BD5) letter-spaced small caps, and a "READY" pill badge in green (#42D8A0) with dark text
+2. Large heading "相册清理" in white bold 26sp
+3. Description text in 3 short lines, muted gray (#A0A8B4) 12sp: "按月浏览设备媒体 · 批量加入删除队列 · 系统回收站保护"
+4. A thin progress bar (blue #0A84FF fill, dark gray track, rounded ends)
+5. Stats row: "总项目 2,847 / 月份 12 / 月均 237" in light gray 12sp
+6. Two buttons side by side: left "已整理" gray button (#2A2F3A background, white text, 18dp radius), right "随机清理" blue button (#0A84FF background, white text, 18dp radius). Both equal width.
+
+Below the hero card: Small section header "月份" in muted text
+
+Below that: month cards in a vertical list, each card is a frosted glass rounded rectangle (24dp radius) with translucent background. Each card shows:
+- A row of 4-5 small thumbnail squares (representing photos, using placeholder colors: blue sky, green forest, sunset orange, beach scene)
+- Text: "2026年6月" on the left in white 15sp bold, "156 张" in gray on the right
+- A second month card showing "2026年5月" with "203 张"
+- A third partially visible card showing "2026年4月" with "178 张"
+
+Overall: premium dark glassmorphism Android UI, clean hierarchy, good spacing, Material 3 influence.
+Constraints: no logos or trademarks, no watermark. Must look like a real Android app screenshot.
