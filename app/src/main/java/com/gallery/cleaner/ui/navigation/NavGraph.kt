@@ -1,5 +1,7 @@
 package com.gallery.cleaner.ui.navigation
 
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -38,32 +40,32 @@ fun NavGraph() {
 
     val defaultEnterTransition = slideInHorizontally(
         initialOffsetX = { it },
-        animationSpec = tween(Motion.Duration.Normal)
+        animationSpec = spring(dampingRatio = 0.85f, stiffness = Spring.StiffnessMediumLow)
     )
 
     val defaultExitTransition = slideOutHorizontally(
         targetOffsetX = { -it },
-        animationSpec = tween(Motion.Duration.Normal)
+        animationSpec = spring(dampingRatio = 0.85f, stiffness = Spring.StiffnessMediumLow)
     )
 
     val defaultPopEnterTransition = slideInHorizontally(
         initialOffsetX = { -it },
-        animationSpec = tween(Motion.Duration.Normal)
+        animationSpec = spring(dampingRatio = 0.85f, stiffness = Spring.StiffnessMediumLow)
     )
 
     val defaultPopExitTransition = slideOutHorizontally(
         targetOffsetX = { it },
-        animationSpec = tween(Motion.Duration.Normal)
+        animationSpec = spring(dampingRatio = 0.85f, stiffness = Spring.StiffnessMediumLow)
     )
 
     val previewEnterTransition = fadeIn(tween(Motion.Duration.Normal)) + slideInHorizontally(
         initialOffsetX = { it / 3 },
-        animationSpec = tween(Motion.Duration.Normal)
+        animationSpec = spring(dampingRatio = 0.85f, stiffness = Spring.StiffnessMediumLow)
     )
 
     val previewExitTransition = slideOutHorizontally(
         targetOffsetX = { it },
-        animationSpec = tween(Motion.Duration.Normal)
+        animationSpec = spring(dampingRatio = 0.85f, stiffness = Spring.StiffnessMediumLow)
     ) + fadeOut(tween(Motion.Duration.Fast))
 
     NavHost(
