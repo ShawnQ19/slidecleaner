@@ -158,10 +158,18 @@ fun RandomCleanupScreen(
                 )
             }
 
-            uiState.currentItem == null -> {
-                EmptyRandomState(
-                    processedCount = uiState.processedCount,
-                    onShuffle = { viewModel.refreshBatch() }
+
+            uiState.isBatchComplete -> {
+                BatchCompleteContent(
+                    batchTotal = uiState.batchTotal,
+                    keptCount = uiState.keptCount,
+                    queuedCount = uiState.deleteQueue.items.size,
+                    onConfirmDelete = { viewModel.showDeleteConfirmDialog() },
+                    onNextBatch = { viewModel.loadNextBatch() },
+                    onExit = {
+                        viewModel.onBackPressed()
+                        onBackClick()
+                    }
                 )
             }
 
@@ -392,58 +400,7 @@ private fun StatusChip(label: String, tint: Color) {
     }
 }
 
-@Composable
-private fun EmptyRandomState(
-    processedCount: Int,
-    onShuffle: () -> Unit
-) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = AppPadding.XXL),
-        contentAlignment = Alignment.Center
-    ) {
-        GlassCard(
-            modifier = Modifier.fillMaxWidth(),
-            shape = AppShape.XLarge,
-            contentPadding = AppPadding.XXL
-        ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(AppPadding.MD)
-            ) {
-                Text(
-                    text = "RANDOM QUEUE COMPLETE",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = AppColors.TextTertiary,
-                    fontWeight = FontWeight.SemiBold
-                )
-                Text(
-                    text = "当前批次已处理完毕",
-                    style = MaterialTheme.typography.headlineSmall,
-                    color = AppColors.TextPrimary,
-                    fontWeight = FontWeight.Black
-                )
-                Text(
-                    text = "已整理 $processedCount 项。可以继续随机抽下一批。",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = AppColors.TextSecondary
-                )
-                Button(
-                    onClick = onShuffle,
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = AppShape.Medium,
-                    colors = ButtonDefaults.buttonColors(containerColor = AppColors.Primary),
-                    contentPadding = PaddingValues(vertical = 12.dp)
-                ) {
-                    Icon(Icons.Default.Shuffle, contentDescription = null, modifier = Modifier.size(18.dp))
-                    Spacer(modifier = Modifier.size(6.dp))
-                    Text("再随机一批", fontWeight = FontWeight.SemiBold)
-                }
-            }
-        }
-    }
-}
+
 
 @Composable
 private fun ErrorState(
