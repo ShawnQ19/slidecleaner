@@ -50,7 +50,9 @@ import com.gallery.cleaner.ui.component.BatchCompleteContent
 import com.gallery.cleaner.ui.component.AppShape
 import com.gallery.cleaner.ui.component.GlassCard
 import com.gallery.cleaner.ui.component.GlassDialog
+import com.gallery.cleaner.ui.component.GlassSnackbar
 import com.gallery.cleaner.ui.component.GlassTopBar
+import com.gallery.cleaner.ui.component.SnackbarType
 import com.gallery.cleaner.ui.theme.AppColors
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
@@ -62,7 +64,8 @@ fun MediaSwipeScreen(
     viewModel: MediaSwipeViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val snackbarHostState = remember { SnackbarHostState() }
+    var showSnackbar by remember { mutableStateOf(false) }
+    var snackbarMessage by remember { mutableStateOf("") }
     val canUndo by viewModel.undoManager.canUndo.collectAsState()
     val density = LocalDensity.current
     var topBarHeight by remember { mutableStateOf(0) }
@@ -87,12 +90,12 @@ fun MediaSwipeScreen(
     LaunchedEffect(uiState.deleteMessage) {
         val message = uiState.deleteMessage
         if (message.isNotEmpty()) {
-            val result = snackbarHostState.showSnackbar(message)
-            if (result == androidx.compose.material3.SnackbarResult.Dismissed ||
-                result == androidx.compose.material3.SnackbarResult.ActionPerformed
-            ) {
-                viewModel.dismissResultMessage()
-            }
+            snackbarMessage = message
+            showSnackbar = true
+            kotlinx.coroutines.delay(3000)
+            showSnackbar = false
+            kotlinx.coroutines.delay(300)
+            viewModel.dismissResultMessage()
         }
     }
 
@@ -255,8 +258,10 @@ fun MediaSwipeScreen(
             )
         }
 
-        SnackbarHost(
-            hostState = snackbarHostState,
+        GlassSnackbar(
+            visible = showSnackbar,
+            message = snackbarMessage,
+            type = if (snackbarMessage.contains("成功") || snackbarMessage.contains("移入")) SnackbarType.SUCCESS else SnackbarType.ERROR,
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 200.dp)

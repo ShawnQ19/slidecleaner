@@ -32,8 +32,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -66,6 +64,8 @@ import com.gallery.cleaner.ui.component.Motion
 import com.gallery.cleaner.ui.component.BatchCompleteContent
 import com.gallery.cleaner.ui.screen.media.DeleteQueueBar
 import com.gallery.cleaner.ui.screen.media.SwipeableMediaCard
+import com.gallery.cleaner.ui.component.GlassSnackbar
+import com.gallery.cleaner.ui.component.SnackbarType
 import com.gallery.cleaner.ui.theme.AppColors
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
@@ -77,7 +77,8 @@ fun RandomCleanupScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val canUndo by viewModel.undoManager.canUndo.collectAsState()
-    val snackbarHostState = remember { SnackbarHostState() }
+    var showSnackbar by remember { mutableStateOf(false) }
+    var snackbarMessage by remember { mutableStateOf("") }
     val density = LocalDensity.current
     var topBarHeight by remember { mutableStateOf(0) }
     val topBarHeightDp = with(density) { topBarHeight.toDp() }
@@ -112,12 +113,12 @@ fun RandomCleanupScreen(
     LaunchedEffect(uiState.deleteMessage) {
         val message = uiState.deleteMessage
         if (message.isNotBlank()) {
-            val result = snackbarHostState.showSnackbar(message)
-            if (result == androidx.compose.material3.SnackbarResult.Dismissed ||
-                result == androidx.compose.material3.SnackbarResult.ActionPerformed
-            ) {
-                viewModel.dismissResultMessage()
-            }
+            snackbarMessage = message
+            showSnackbar = true
+            kotlinx.coroutines.delay(3000)
+            showSnackbar = false
+            kotlinx.coroutines.delay(300)
+            viewModel.dismissResultMessage()
         }
     }
 
@@ -298,8 +299,10 @@ fun RandomCleanupScreen(
             )
         }
 
-        SnackbarHost(
-            hostState = snackbarHostState,
+        GlassSnackbar(
+            visible = showSnackbar,
+            message = snackbarMessage,
+            type = if (snackbarMessage.contains("成功") || snackbarMessage.contains("移入")) SnackbarType.SUCCESS else SnackbarType.ERROR,
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 200.dp)
