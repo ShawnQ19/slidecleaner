@@ -74,13 +74,18 @@ class RandomCleanupViewModel @Inject constructor(
     override fun handleDeleteSuccess(result: com.gallery.cleaner.domain.repository.TrashResult.Success) {
         AppLogger.i(TAG, "删除成功: ${result.deletedCount} 项")
         finalizeKeptItems()
-        finalizeDeleteQueue(
-            message = if (deleteMediaUseCase.repository.isTrashSupported()) {
-                "已移入系统回收站 ${result.deletedCount} 项"
-            } else {
-                "已永久删除 ${result.deletedCount} 项"
-            }
-        )
+        _uiState.update {
+            it.copy(
+                showDeleteDialog = false,
+                deleteSuccess = true,
+                deleteMessage = if (deleteMediaUseCase.repository.isTrashSupported()) {
+                    "已移入系统回收站 ${result.deletedCount} 项"
+                } else {
+                    "已永久删除 ${result.deletedCount} 项"
+                },
+                showPostDeleteDialog = true
+            )
+        }
     }
 
     fun loadNextBatch() {

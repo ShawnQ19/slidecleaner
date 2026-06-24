@@ -155,6 +155,7 @@ fun RandomCleanupScreen(
                     Box(modifier = Modifier.fillMaxWidth().height(3.dp).padding(horizontal = AppPadding.LG).clip(AppShape.Pill).background(AppColors.SurfaceOverlay)) {
                         Box(modifier = Modifier.fillMaxWidth(animatedProgress).fillMaxSize().clip(AppShape.Pill).background(AppColors.Primary))
                     }
+                    val isOnEndPage = pagerState.currentPage >= visibleItems.size
                     HorizontalPager(state = pagerState, modifier = Modifier.weight(1f)) { page ->
                         if (page < visibleItems.size) {
                             val item = visibleItems[page]
@@ -166,7 +167,9 @@ fun RandomCleanupScreen(
                             EndPageContent(batchTotal = uiState.batchTotal, keptCount = uiState.keptCount, queuedCount = uiState.deleteQueue.items.size, onConfirmDelete = { viewModel.showDeleteConfirmDialog() }, onExit = { viewModel.showExitConfirmDialog() })
                         }
                     }
-                    DeleteQueueBar(deleteQueue = uiState.deleteQueue, onConfirmDelete = { viewModel.showDeleteConfirmDialog() }, onUndo = { viewModel.undo() }, canUndo = canUndo)
+                    if (!isOnEndPage) {
+                        DeleteQueueBar(deleteQueue = uiState.deleteQueue, onConfirmDelete = { viewModel.showDeleteConfirmDialog() }, onUndo = { viewModel.undo() }, canUndo = canUndo)
+                    }
                 }
             }
         }
