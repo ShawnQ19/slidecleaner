@@ -5,6 +5,19 @@
 
 ---
 
+## [1.7.2] - 2026-06-24
+
+### 修复 (Fixed)
+
+- **随机清理确认删除后页面不跳转**
+  - 修复点击"确认删除"移入回收站后，页面停留在完成卡片不跳转的问题。
+  - 删除成功后弹出"下一批 / 返回首页"对话框供用户选择下一步操作。
+  - 相关文件：[RandomCleanupViewModel.kt](app/src/main/java/com/gallery/cleaner/ui/screen/random/RandomCleanupViewModel.kt)
+
+- **随机清理结束页重复"确认删除"按钮**
+  - 到达结束页时隐藏底部 DeleteQueueBar，避免与卡片内的"确认删除"按钮重复。
+  - 相关文件：[RandomCleanupScreen.kt](app/src/main/java/com/gallery/cleaner/ui/screen/random/RandomCleanupScreen.kt)
+
 ## [1.5.0] - 2026-06-12
 
 ### 改进 (Changed)
