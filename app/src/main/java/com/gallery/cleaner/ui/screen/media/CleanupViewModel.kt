@@ -138,7 +138,8 @@ abstract class CleanupViewModel(
             it.copy(
                 showDeleteDialog = false,
                 deleteSuccess = true,
-                deleteMessage = message
+                deleteMessage = message,
+                showPostDeleteDialog = true
             )
         }
         onAfterDeleteSuccess()
@@ -205,6 +206,18 @@ abstract class CleanupViewModel(
 
     fun dismissResultMessage() {
         _uiState.update { it.copy(deleteSuccess = false, deleteMessage = "") }
+    }
+
+    fun dismissPostDeleteDialog() {
+        _uiState.update { it.copy(showPostDeleteDialog = false) }
+    }
+
+    fun showExitConfirmDialog() {
+        _uiState.update { it.copy(showExitConfirmDialog = true) }
+    }
+
+    fun dismissExitConfirmDialog() {
+        _uiState.update { it.copy(showExitConfirmDialog = false) }
     }
 
     open fun clearDeleteQueue() {
