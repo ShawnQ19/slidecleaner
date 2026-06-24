@@ -37,6 +37,10 @@ class GalleryApp : Application(), ImageLoaderFactory {
             .components {
                 add(VideoFrameDecoder.Factory())
             }
+            .allowHardware(true)
+            .memoryCachePolicy(coil.request.CachePolicy.ENABLED)
+            .diskCachePolicy(coil.request.CachePolicy.ENABLED)
+            .crossfade(false)
             .build()
     }
 }

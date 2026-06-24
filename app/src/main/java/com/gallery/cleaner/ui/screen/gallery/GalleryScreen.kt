@@ -147,9 +147,9 @@ fun GalleryScreen(
                 }
 
                 else -> {
-                    val totalCount = uiState.groups.sumOf { it.mediaItems.size }
+                    val totalCount = remember(uiState.groups) { uiState.groups.sumOf { it.mediaItems.size } }
                     val monthCount = uiState.groups.size
-                    val averagePerMonth = if (monthCount > 0) totalCount / monthCount else 0
+                    val averagePerMonth = remember(monthCount, totalCount) { if (monthCount > 0) totalCount / monthCount else 0 }
 
                     LazyColumn(
                         modifier = Modifier.fillMaxSize(),
@@ -165,7 +165,7 @@ fun GalleryScreen(
                         ),
                         verticalArrangement = Arrangement.spacedBy(Responsive.listSpacing)
                     ) {
-                        item(key = "hero") {
+                        item(key = "hero", contentType = "HeroPanel") {
                             GalleryHeroPanel(
                                 totalCount = totalCount,
                                 monthCount = monthCount,
@@ -177,7 +177,8 @@ fun GalleryScreen(
 
                         itemsIndexed(
                             uiState.groups,
-                            key = { _, group -> group.yearMonth.toString() }
+                            key = { _, group -> group.yearMonth.toString() },
+                            contentType = { _, _ -> "MonthCard" }
                         ) { index, group ->
                             MonthCard(
                                 group = group,
@@ -233,9 +234,9 @@ fun GalleryScreen(
                                 tint = AppColors.TextSecondary
                             )
                         }
-                        val totalCount = uiState.groups.sumOf { it.mediaItems.size }
+                        val barTotalCount = remember(uiState.groups) { uiState.groups.sumOf { it.mediaItems.size } }
                         Text(
-                            text = "$totalCount 项",
+                            text = "$barTotalCount 项",
                             style = MaterialTheme.typography.labelMedium,
                             color = AppColors.TextTertiary,
                             modifier = Modifier.padding(end = 16.dp)
