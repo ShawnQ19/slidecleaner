@@ -89,6 +89,13 @@ fun MediaSwipeScreen(
         uiState.batchTotal
     }
 
+    LaunchedEffect(uiState.items.hashCode()) {
+        if (pagerState.currentPage != 0 && uiState.currentIndex == 0) {
+            pagerState.scrollToPage(0)
+            lastPage = null
+        }
+    }
+
     LaunchedEffect(visibleItems.size, uiState.currentIndex) {
         val target = uiState.currentIndex
         if (target in 0 until visibleItems.size && pagerState.currentPage != target) pagerState.scrollToPage(target)

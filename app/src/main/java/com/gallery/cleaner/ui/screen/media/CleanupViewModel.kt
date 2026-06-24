@@ -129,13 +129,16 @@ abstract class CleanupViewModel(
         } else {
             "已永久删除 ${result.deletedCount} 项"
         }
+        val deletedIds = _deleteQueueItems.map { it.id }.toSet()
         _deleteQueueItems.clear()
         undoManager.clear()
-        _uiState.update { it.copy(hiddenItemIds = emptySet()) }
         updateDeleteQueue()
         finalizeKeptItems()
         _uiState.update {
             it.copy(
+                items = it.items.filter { item -> item.id !in deletedIds },
+                hiddenItemIds = emptySet(),
+                currentIndex = 0,
                 showDeleteDialog = false,
                 deleteSuccess = true,
                 deleteMessage = message,
