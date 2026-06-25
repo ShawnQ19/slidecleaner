@@ -108,12 +108,9 @@ actor PhotoLibraryService {
     }
     
     func restoreFromTrash(_ assets: [PHAsset]) async throws {
-        try await PHPhotoLibrary.shared().performChanges {
-            for asset in assets {
-                let request = PHAssetChangeRequest(for: asset)
-                request.isTrashed = false
-            }
-        }
+        // iOS does not support programmatic restore from trash
+        // Users must restore from the Photos app's "Recently Deleted" album
+        throw PhotoLibraryError.unknown
     }
     
     func deletePermanently(_ assets: [PHAsset]) async throws {
