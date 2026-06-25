@@ -3,12 +3,6 @@ name: Build iOS
 on:
   push:
     branches: [ master ]
-    paths:
-      - 'ios/**'
-  pull_request:
-    branches: [ master ]
-    paths:
-      - 'ios/**'
   workflow_dispatch:
 
 jobs:
