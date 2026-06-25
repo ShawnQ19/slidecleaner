@@ -35,7 +35,7 @@ data class CleanupUiState(
     val remainingInBatch: Int get() = items.size
     val isBusy: Boolean get() = showDeleteDialog
     val isBatchComplete: Boolean get() = !isLoading && items.isEmpty() && !showDeleteDialog
-    val keptCount: Int get() = batchTotal - deleteQueue.items.size - items.size
+    val keptCount: Int get() = batchTotal - deleteQueue.items.size
 }
 
 typealias MediaSwipeUiState = CleanupUiState

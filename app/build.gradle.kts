@@ -17,8 +17,8 @@ android {
         minSdk = 26
         targetSdk = 35
         // 语义化版本：主版本.次版本.修订号
-        versionCode = 10705
-        versionName = "1.7.5"
+        versionCode = 10706
+        versionName = "1.7.6"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
