@@ -194,7 +194,7 @@ fun RandomCleanupScreen(
         }
 
         if (uiState.showPostDeleteDialog) {
-            GlassDialog(onDismissRequest = { viewModel.dismissPostDeleteDialog() }, title = "删除完成", text = "${uiState.deleteMessage}，是否进行下一批随机整理？", confirmText = "下一批", isDestructive = false, onConfirm = { viewModel.dismissPostDeleteDialog(); viewModel.loadNextBatch() }, onDismiss = { viewModel.dismissPostDeleteDialog(); viewModel.onBackPressed(); onBackClick() })
+            GlassDialog(onDismissRequest = { viewModel.dismissPostDeleteDialog() }, title = "删除完成", text = "${uiState.deleteMessage}，是否进行下一批随机整理？", confirmText = "下一批", dismissText = "返回首页", isDestructive = false, onConfirm = { viewModel.dismissPostDeleteDialog(); viewModel.loadNextBatch() }, onDismiss = { viewModel.dismissPostDeleteDialog(); viewModel.onBackPressed(); onBackClick() })
         }
 
         if (uiState.showExitConfirmDialog) {
