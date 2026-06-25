@@ -1,0 +1,489 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A10000010000000000000001 /* GalleryCleanerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000010000000000000001; };
+		A10000020000000000000001 /* MediaItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000020000000000000001; };
+		A10000030000000000000001 /* MediaGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000030000000000000001; };
+		A10000040000000000000001 /* DeleteQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000040000000000000001; };
+		A10000050000000000000001 /* PhotoLibraryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000050000000000000001; };
+		A10000060000000000000001 /* ProcessedStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000060000000000000001; };
+		A10000070000000000000001 /* AppColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000070000000000000001; };
+		A10000080000000000000001 /* UndoManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000080000000000000001; };
+		A10000090000000000000001 /* GalleryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000090000000000000001; };
+		A10000100000000000000001 /* SwipeCleanupViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000100000000000000001; };
+		A10000110000000000000001 /* ThemeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000110000000000000001; };
+		A10000120000000000000001 /* GalleryScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000120000000000000001; };
+		A10000130000000000000001 /* SwipeCleanupScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000130000000000000001; };
+		A10000140000000000000001 /* RandomCleanupScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000140000000000000001; };
+		A10000150000000000000001 /* TrashScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000150000000000000001; };
+		A10000160000000000000001 /* PreviewScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000160000000000000001; };
+		A10000170000000000000001 /* ProcessedGalleryScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000170000000000000001; };
+		A10000180000000000000001 /* ThemeSettingsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000180000000000000001; };
+		A10000190000000000000001 /* GlassCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000190000000000000001; };
+		A10000200000000000000001 /* MediaThumbnail.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000200000000000000001; };
+		A10000210000000000000001 /* AppRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000210000000000000001; };
+		A10000220000000000000001 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A20000220000000000000001; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		A20000010000000000000001 /* GalleryCleanerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalleryCleanerApp.swift; sourceTree = "<group>"; };
+		A20000020000000000000001 /* MediaItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaItem.swift; sourceTree = "<group>"; };
+		A20000030000000000000001 /* MediaGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaGroup.swift; sourceTree = "<group>"; };
+		A20000040000000000000001 /* DeleteQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteQueue.swift; sourceTree = "<group>"; };
+		A20000050000000000000001 /* PhotoLibraryService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoLibraryService.swift; sourceTree = "<group>"; };
+		A20000060000000000000001 /* ProcessedStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessedStore.swift; sourceTree = "<group>"; };
+		A20000070000000000000001 /* AppColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppColors.swift; sourceTree = "<group>"; };
+		A20000080000000000000001 /* UndoManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UndoManager.swift; sourceTree = "<group>"; };
+		A20000090000000000000001 /* GalleryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalleryViewModel.swift; sourceTree = "<group>"; };
+		A20000100000000000000001 /* SwipeCleanupViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeCleanupViewModel.swift; sourceTree = "<group>"; };
+		A20000110000000000000001 /* ThemeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeViewModel.swift; sourceTree = "<group>"; };
+		A20000120000000000000001 /* GalleryScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalleryScreen.swift; sourceTree = "<group>"; };
+		A20000130000000000000001 /* SwipeCleanupScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeCleanupScreen.swift; sourceTree = "<group>"; };
+		A20000140000000000000001 /* RandomCleanupScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RandomCleanupScreen.swift; sourceTree = "<group>"; };
+		A20000150000000000000001 /* TrashScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrashScreen.swift; sourceTree = "<group>"; };
+		A20000160000000000000001 /* PreviewScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewScreen.swift; sourceTree = "<group>"; };
+		A20000170000000000000001 /* ProcessedGalleryScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessedGalleryScreen.swift; sourceTree = "<group>"; };
+		A20000180000000000000001 /* ThemeSettingsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeSettingsScreen.swift; sourceTree = "<group>"; };
+		A20000190000000000000001 /* GlassCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlassCard.swift; sourceTree = "<group>"; };
+		A20000200000000000000001 /* MediaThumbnail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaThumbnail.swift; sourceTree = "<group>"; };
+		A20000210000000000000001 /* AppRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppRouter.swift; sourceTree = "<group>"; };
+		A20000220000000000000001 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		A20000230000000000000001 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A30000010000000000000001 /* GalleryCleaner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GalleryCleaner.app; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A40000010000000000000001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		A50000010000000000000001 = {
+			isa = PBXGroup;
+			children = (
+				A50000020000000000000001 /* GalleryCleaner */,
+				A50000100000000000000001 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		A50000020000000000000001 /* GalleryCleaner */ = {
+			isa = PBXGroup;
+			children = (
+				A50000030000000000000001 /* App */,
+				A50000040000000000000001 /* Models */,
+				A50000050000000000000001 /* Services */,
+				A50000060000000000000001 /* ViewModels */,
+				A50000070000000000000001 /* Views */,
+				A50000080000000000000001 /* Theme */,
+				A50000090000000000000001 /* Utils */,
+				A50000110000000000000001 /* Navigation */,
+				A20000220000000000000001 /* Assets.xcassets */,
+				A20000230000000000000001 /* Info.plist */,
+			);
+			path = GalleryCleaner;
+			sourceTree = "<group>";
+		};
+		A50000030000000000000001 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				A20000010000000000000001 /* GalleryCleanerApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		A50000040000000000000001 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				A20000020000000000000001 /* MediaItem.swift */,
+				A20000030000000000000001 /* MediaGroup.swift */,
+				A20000040000000000000001 /* DeleteQueue.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		A50000050000000000000001 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				A20000050000000000000001 /* PhotoLibraryService.swift */,
+				A20000060000000000000001 /* ProcessedStore.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		A50000060000000000000001 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				A20000090000000000000001 /* GalleryViewModel.swift */,
+				A20000100000000000000001 /* SwipeCleanupViewModel.swift */,
+				A20000110000000000000001 /* ThemeViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		A50000070000000000000001 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				A50000120000000000000001 /* Gallery */,
+				A50000130000000000000001 /* Cleanup */,
+				A50000140000000000000001 /* Random */,
+				A50000150000000000000001 /* Trash */,
+				A50000160000000000000001 /* Preview */,
+				A50000170000000000000001 /* Processed */,
+				A50000180000000000000001 /* Settings */,
+				A50000190000000000000001 /* Components */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		A50000080000000000000001 /* Theme */ = {
+			isa = PBXGroup;
+			children = (
+				A20000070000000000000001 /* AppColors.swift */,
+			);
+			path = Theme;
+			sourceTree = "<group>";
+		};
+		A50000090000000000000001 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				A20000080000000000000001 /* UndoManager.swift */,
+			);
+			path = Utils;
+			sourceTree = "<group>";
+		};
+		A50000100000000000000001 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A30000010000000000000001 /* GalleryCleaner.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A50000110000000000000001 /* Navigation */ = {
+			isa = PBXGroup;
+			children = (
+				A20000210000000000000001 /* AppRouter.swift */,
+			);
+			path = Navigation;
+			sourceTree = "<group>";
+		};
+		A50000120000000000000001 /* Gallery */ = {
+			isa = PBXGroup;
+			children = (
+				A20000120000000000000001 /* GalleryScreen.swift */,
+			);
+			path = Gallery;
+			sourceTree = "<group>";
+		};
+		A50000130000000000000001 /* Cleanup */ = {
+			isa = PBXGroup;
+			children = (
+				A20000130000000000000001 /* SwipeCleanupScreen.swift */,
+			);
+			path = Cleanup;
+			sourceTree = "<group>";
+		};
+		A50000140000000000000001 /* Random */ = {
+			isa = PBXGroup;
+			children = (
+				A20000140000000000000001 /* RandomCleanupScreen.swift */,
+			);
+			path = Random;
+			sourceTree = "<group>";
+		};
+		A50000150000000000000001 /* Trash */ = {
+			isa = PBXGroup;
+			children = (
+				A20000150000000000000001 /* TrashScreen.swift */,
+			);
+			path = Trash;
+			sourceTree = "<group>";
+		};
+		A50000160000000000000001 /* Preview */ = {
+			isa = PBXGroup;
+			children = (
+				A20000160000000000000001 /* PreviewScreen.swift */,
+			);
+			path = Preview;
+			sourceTree = "<group>";
+		};
+		A50000170000000000000001 /* Processed */ = {
+			isa = PBXGroup;
+			children = (
+				A20000170000000000000001 /* ProcessedGalleryScreen.swift */,
+			);
+			path = Processed;
+			sourceTree = "<group>";
+		};
+		A50000180000000000000001 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				A20000180000000000000001 /* ThemeSettingsScreen.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		A50000190000000000000001 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				A20000190000000000000001 /* GlassCard.swift */,
+				A20000200000000000000001 /* MediaThumbnail.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A60000010000000000000001 /* GalleryCleaner */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A80000030000000000000001;
+			buildPhases = (
+				A70000010000000000000001 /* Sources */,
+				A40000010000000000000001 /* Frameworks */,
+				A70000020000000000000001 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = GalleryCleaner;
+			productName = GalleryCleaner;
+			productReference = A30000010000000000000001;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A90000010000000000000001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1500;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					A60000010000000000000001 = {
+						CreatedOnToolsVersion = 15.0;
+					};
+				};
+			};
+			buildConfigurationList = A80000010000000000000001;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = "zh-Hans";
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				"zh-Hans",
+				Base,
+			);
+			mainGroup = A50000010000000000000001;
+			productRefGroup = A50000100000000000000001;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A60000010000000000000001,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A70000020000000000000001 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A10000220000000000000001 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A70000010000000000000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A10000010000000000000001 /* GalleryCleanerApp.swift in Sources */,
+				A10000020000000000000001 /* MediaItem.swift in Sources */,
+				A10000030000000000000001 /* MediaGroup.swift in Sources */,
+				A10000040000000000000001 /* DeleteQueue.swift in Sources */,
+				A10000050000000000000001 /* PhotoLibraryService.swift in Sources */,
+				A10000060000000000000001 /* ProcessedStore.swift in Sources */,
+				A10000070000000000000001 /* AppColors.swift in Sources */,
+				A10000080000000000000001 /* UndoManager.swift in Sources */,
+				A10000090000000000000001 /* GalleryViewModel.swift in Sources */,
+				A10000100000000000000001 /* SwipeCleanupViewModel.swift in Sources */,
+				A10000110000000000000001 /* ThemeViewModel.swift in Sources */,
+				A10000120000000000000001 /* GalleryScreen.swift in Sources */,
+				A10000130000000000000001 /* SwipeCleanupScreen.swift in Sources */,
+				A10000140000000000000001 /* RandomCleanupScreen.swift in Sources */,
+				A10000150000000000000001 /* TrashScreen.swift in Sources */,
+				A10000160000000000000001 /* PreviewScreen.swift in Sources */,
+				A10000170000000000000001 /* ProcessedGalleryScreen.swift in Sources */,
+				A10000180000000000000001 /* ThemeSettingsScreen.swift in Sources */,
+				A10000190000000000000001 /* GlassCard.swift in Sources */,
+				A10000200000000000000001 /* MediaThumbnail.swift in Sources */,
+				A10000210000000000000001 /* AppRouter.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		B10000010000000000000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		B10000020000000000000001 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		B10000030000000000000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = GalleryCleaner/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "相册清理";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "相册清理需要访问您的照片库来帮助您整理和清理不需要的照片";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.gallery.cleaner.ios;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B10000040000000000000001 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = GalleryCleaner/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "相册清理";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "相册清理需要访问您的照片库来帮助您整理和清理不需要的照片";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.gallery.cleaner.ios;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A80000010000000000000001 /* Build configuration list for PBXProject "GalleryCleaner" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B10000010000000000000001 /* Debug */,
+				B10000020000000000000001 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A80000030000000000000001 /* Build configuration list for PBXNativeTarget "GalleryCleaner" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B10000030000000000000001 /* Debug */,
+				B10000040000000000000001 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = A90000010000000000000001;
+}
