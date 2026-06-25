@@ -17,7 +17,7 @@ class SwipeCleanupViewModel: ObservableObject {
     @Published var deleteMessage = ""
     
     let undoManager = UndoManager()
-    let batchTotal: Int
+    var batchTotal: Int
     let processedStore = ProcessedStore()
     let photoService = PhotoLibraryService()
     
