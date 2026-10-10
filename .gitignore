@@ -32,3 +32,8 @@ log_export/
 .trae/
 .fnsync_temp_dir/
 *_backup.kt
+
+# Local / transient
+.mimocode/
+ios/build/
+ios/*.ipa
